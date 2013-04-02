@@ -1,6 +1,7 @@
 
 preserve-inputs
 
+
 amplify
 
 accounts-password
@@ -28,10 +29,7 @@ coffeescript
 browser-store
 stripe
 imgur
-canvas-image-manipulation
-jqbootstrapvalidation
 publish-with-relations
-transitioner
 event-horizon
 handlebar-bind
 session-extras
