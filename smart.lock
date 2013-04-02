@@ -1,0 +1,126 @@
+{
+  "meteor": {
+    "git": "https://github.com/meteor/meteor.git",
+    "branch": "master",
+    "commit": "f07715dc70de16a7aab84e56ab0c6cbd9c1f9dc6"
+  },
+  "dependencies": {
+    "basePackages": {
+      "moment": {},
+      "bootstrap-updated": {},
+      "font-awesome": {},
+      "bafa": {},
+      "router": {},
+      "jade-handlebars": {},
+      "handlebar-helpers": {},
+      "stripe": {},
+      "collectionFS": {},
+      "imgur": {},
+      "publish-with-relations": {},
+      "event-horizon": {},
+      "session-extras": {},
+      "handlebar-bind": {},
+      "parsleyjs": {},
+      "assert": {},
+      "underscore-inflection": {},
+      "mongodb-aggregation": {}
+    },
+    "packages": {
+      "moment": {
+        "git": "https://github.com/possibilities/meteor-moment.git",
+        "tag": "v1.7.0",
+        "commit": "c64b6ec0e714b9556f4b6643d430b868ba69d3d7"
+      },
+      "bootstrap-updated": {
+        "git": "https://github.com/Charuru/bootstrap-updated.git",
+        "tag": "v1.0.1",
+        "commit": "bdd5fcc8e134e62bcbb9d11aad8270534ffb6493"
+      },
+      "font-awesome": {
+        "git": "https://github.com/nate-strauser/meteor-font-awesome.git",
+        "tag": "v0.1.3",
+        "commit": "e507577b97827de662866304f8b9d3d553e3912f"
+      },
+      "bafa": {
+        "git": "https://github.com/jackp/BAFA.git",
+        "tag": "v0.3.0",
+        "commit": "cf8c9b0be42b21cb0203c6d08926529c4e00b0c6"
+      },
+      "router": {
+        "git": "https://github.com/tmeasday/meteor-router.git",
+        "tag": "v0.4.3",
+        "commit": "0691a6e2c4c249ce7d00cd6dc7ad27e1c7330a31"
+      },
+      "jade-handlebars": {
+        "git": "https://github.com/SimonDegraeve/meteor-jade-handlebars.git",
+        "tag": "v0.2.7",
+        "commit": "82f6f9ac43a68ffabe1d9b9620be2a4ca6790b56"
+      },
+      "handlebar-helpers": {
+        "git": "https://github.com/raix/Meteor-handlebar-helpers.git",
+        "tag": "v0.0.5",
+        "commit": "bedecf71d04097773b359ccbf6e5bd97fcb53f8e"
+      },
+      "stripe": {
+        "git": "https://github.com/appleifreak/stripe-meteor.git",
+        "tag": "v1.0.0",
+        "commit": "152de8922a7e0f3d1d131ef457d566f8654c0743"
+      },
+      "collectionFS": {
+        "git": "https://github.com/raix/Meteor-CollectionFS.git",
+        "tag": "v0.1.9",
+        "commit": "ac12b7df64a5499ade275f8351752afdc8255c29"
+      },
+      "imgur": {
+        "git": "https://github.com/grmlin/meteor-imgur.git",
+        "tag": "v0.1.0",
+        "commit": "0781b66ce15a4d9afaed98455761a5b7a2104125"
+      },
+      "publish-with-relations": {
+        "git": "https://github.com/erundook/meteor-publish-with-relations.git",
+        "tag": "v0.1.5",
+        "commit": "98213e9f056b139597c99fb9ec2884ae6be76d91"
+      },
+      "event-horizon": {
+        "git": "https://github.com/belisarius222/meteor-event-horizon.git",
+        "tag": "v0.1.1",
+        "commit": "f7d19e16bf7527c34d853a9bc9002e9be53bdb9b"
+      },
+      "session-extras": {
+        "git": "https://github.com/belisarius222/meteor-session-extras.git",
+        "tag": "v0.3.0",
+        "commit": "0c49d41009821e76f46af3ad65d0a1d5bfa8d4eb"
+      },
+      "handlebar-bind": {
+        "git": "https://github.com/raix/Meteor-handlebar-bind.git",
+        "tag": "v0.0.1",
+        "commit": "5dad52f10c53c3c322406432ab18531904a17213"
+      },
+      "parsleyjs": {
+        "git": "https://github.com/nate-strauser/meteor-parsleyjs.git",
+        "tag": "v0.1.0",
+        "commit": "5ec267dcc1af252774a23dfc8b0c9c495fe2a8cb"
+      },
+      "assert": {
+        "git": "https://github.com/peerlibrary/meteor-assert.git",
+        "tag": "v0.1.0",
+        "commit": "bd421be4cfe9c396b56e99673773fd9bfd2baee3"
+      },
+      "underscore-inflection": {
+        "git": "https://github.com/pius/meteor-underscore-inflection.git",
+        "tag": "v1.0.0",
+        "commit": "fe5f71cf03f10ba1bf9483a85e8290c9db028ea2"
+      },
+      "mongodb-aggregation": {
+        "git": "https://github.com/jhoxray/meteor-mongo-extensions.git",
+        "tag": "v0.1.5",
+        "commit": "54579b8a35fc59939995c63af26305024ed3bdad"
+      },
+      "page-js-ie-support": {
+        "git": "https://github.com/tmeasday/meteor-page-js-ie-support.git",
+        "tag": "v1.3.5",
+        "commit": "b99ed8380aefd10b2afc8f18d9eed4dd0d8ea9cb"
+      }
+    }
+  }
+}
