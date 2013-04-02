@@ -64,7 +64,7 @@ Meteor.BrowserStore = _.extend({}, {
       self.keys[key] = serializedValue;
 
       var invalidateAll = function (cset) {
-        cset && cset.invalidate();
+        cset && cset.changed();
       };
 
       invalidateAll(self.keyDeps[key]);
