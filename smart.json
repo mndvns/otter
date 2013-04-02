@@ -19,7 +19,6 @@
     "parsleyjs"              : {},
     "assert"                 : {},
     "underscore-inflection"  : {},
-    "mongodb-aggregation"    : {},
-    "browser-store"          : {}
+    "mongodb-aggregation"    : {}
   }
 }

@@ -19,7 +19,6 @@
       "publish-with-relations": {},
       "event-horizon": {},
       "session-extras": {},
-      "handlebar-bind": {},
       "parsleyjs": {},
       "assert": {},
       "underscore-inflection": {},
@@ -90,11 +89,6 @@
         "git": "https://github.com/belisarius222/meteor-session-extras.git",
         "tag": "v0.3.0",
         "commit": "0c49d41009821e76f46af3ad65d0a1d5bfa8d4eb"
-      },
-      "handlebar-bind": {
-        "git": "https://github.com/raix/Meteor-handlebar-bind.git",
-        "tag": "v0.0.1",
-        "commit": "5dad52f10c53c3c322406432ab18531904a17213"
       },
       "parsleyjs": {
         "git": "https://github.com/nate-strauser/meteor-parsleyjs.git",
