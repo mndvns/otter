@@ -4,3 +4,4 @@ Cakefile
 lock.json
 .meteor
 uploads
+.DS_Store

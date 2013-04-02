@@ -16,7 +16,6 @@
     "publish-with-relations" : {},
     "event-horizon"          : {},
     "session-extras"         : {},
-    "handlebar-bind"         : {},
     "parsleyjs"              : {},
     "assert"                 : {},
     "underscore-inflection"  : {},
