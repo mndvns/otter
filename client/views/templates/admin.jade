@@ -55,6 +55,9 @@ template(name="admin_collections_sorts")
 template(name="admin_collections_tags")
   {{> admin_section }}
 
+template(name="admin_collections_tagsets")
+  {{> admin_section }}
+
 template(name="admin_collections_locations")
   {{> admin_section }}
 
@@ -66,19 +69,18 @@ template(name="admin_tests")
 
 template(name="admin_tests_sorts")
   {{> stats }}
-  {{> mocha }}
 
 template(name="admin_tests_tags")
   {{> stats }}
-  {{> mocha }}
+
+template(name="admin_tests_tagsets")
+  {{> stats }}
 
 template(name="admin_tests_users")
   {{> stats }}
-  {{> mocha }}
 
 template(name="admin_tests_offers")
   {{> stats }}
-  {{> mocha }}
 
 template(name="stats")
   h1 My offers: {{ myOffers }}

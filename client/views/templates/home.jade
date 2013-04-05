@@ -119,6 +119,7 @@ mixin topnav(name)
           .inner
             mixin sublink( "page", name, area, "sorts" )
             mixin sublink( "page", name, area, "tags" )
+            mixin sublink( "page", name, area, "tagsets" )
             mixin sublink( "page", name, area, "locations" )
             mixin sublink( "page", name, area, "users" )
             mixin sublink( "page", name, area, "offers" )
@@ -146,66 +147,16 @@ head
 
 
 body
-  .bg
   {{> wrapper }}
+  {{> logs_bootstrap }}
 
 template(name="wrapper")
-  #dimmer
   .wrapper
-    {{> ceiling }}
+    {{> atlas }}
     {{> content }}
 
-template(name="ceiling")
-  nav.ceiling.clr-bg.dark(data-terrace= "true")
-    .toggler-group.left
-      a(href="#")
-        .brand
-
-    .terrace
-      {{#constant}}
-      #terrace-alert.centered
-      #terrace-help.centered
-      {{/constant}}
-
-
-      #sign-in.long
-        .inputs
-          div(data-account="sign", data-slip-show='true')
-            input(type="text", placeholder="username", id="username", tabindex=1).span4
-            input(type="password", placeholder="password", id="password", tabindex=3).span4
-          .clearfix
-          div(data-account="create", data-slip-show="false")
-            input(type="text", placeholder="email (optional)", id="email", tabindex=2).span4
-            input(type="password", placeholder="password (again)", id="password2", tabindex=4).span4
-          .clearfix
-          div(data-account="forgot", data-slip-show="false")
-            p A message with instructions will be sent to your email address
-            input(type="text", placeholder="email", id="forgot-email", tabindex=1).span8
-        .controls
-          button(type="submit", data-account-submit-type="sign", tabindex=4).btn.clr-bg.span8 Sign In
-        .clearfix
-        .alert.alert-blend-in Message
-        .clearfix
-        .navigation
-          a(href="#", data-account-data='{"hide": ["forgot", "create"], "show":["sign"], "type":"sign", "text": "Sign In"}').active Sign In 
-          |  | 
-          a(href="#", data-account-data='{"hide": ["forgot"], "show":["sign", "create"], "type":"create", "text": "Create Account"}') Create Account 
-          |  | 
-          a(href="#", data-account-data='{"hide": ["sign", "create"], "show":["forgot"], "type":"forgot", "text": "Reset password"}') Forgot Password 
-
-    .toggler-group.right
-      {{#if currentUser}}
-      {{#isolate}}
-      div(data-signed-in="true")
-        span {{currentUser.username}}
-        span.badge(data-toggle="tooltip", title='The number next to your name is your "karma." It represents how much good you&#8216;ve done for the Connected community, and can be spent in a variety of ways. You&#8216;ll figure it out as you go along.', data-placement="bottom") {{dropDecimal currentUser.karma}} karma 
-        span.badge {{count 'Purchases'}} purchases
-        span.badge.logout logout
-      {{/isolate}}
-      {{else}}
-      a.login(data-signed-in="false", data-toggle-mode="sign-in")
-        span#login login
-    {{/if}}
+template(name='atlas')
+  h1 hi!
 
 
 template(name="content")
@@ -213,13 +164,13 @@ template(name="content")
     .current
       {{#constant}} {{/constant}}
 
-      {{#if sessionEquals 'shift_current' 'home'}}
+      {{#if session 'equals' 'shift_current' 'home'}}
       mixin topnav("home") {{/if}}
-      {{#if sessionEquals 'shift_current' 'account'}}
+      {{#if session 'equals' 'shift_current' 'account'}}
       mixin topnav("account") {{/if}}
-      {{#if sessionEquals 'shift_current' 'about'}}
+      {{#if session 'equals' 'shift_current' 'about'}}
       mixin topnav("about") {{/if}}
-      {{#if sessionEquals 'shift_current' 'admin'}}
+      {{#if session 'equals' 'shift_current' 'admin'}}
       mixin topnav("admin") {{/if}}
 
       .container
@@ -228,13 +179,13 @@ template(name="content")
     .next
       {{#constant}} {{/constant}}
 
-      {{#if sessionEquals 'shift_area' 'home'}}
+      {{#if session 'equals' 'shift_area' 'home'}}
       mixin topnav("home") {{/if}}
-      {{#if sessionEquals 'shift_area' 'account'}}
+      {{#if session 'equals' 'shift_area' 'account'}}
       mixin topnav("account") {{/if}}
-      {{#if sessionEquals 'shift_area' 'about'}}
+      {{#if session 'equals' 'shift_area' 'about'}}
       mixin topnav("about") {{/if}}
-      {{#if sessionEquals 'shift_area' 'admin'}}
+      {{#if session 'equals' 'shift_area' 'admin'}}
       mixin topnav("admin") {{/if}}
 
       .container
@@ -244,30 +195,13 @@ template(name="content")
 template(name='home')
   {{#if store "get" "user_loc"}}
   {{> hero }}
-  .offers(data-gray="{{gray 'offers'}}")
-    {{#each getOffers}}
+  .offers
+    {{#each get_offers}}
     {{> offer }}
     {{/each}}
   {{else}}
   {{> intro }}
   {{/if}}
-
-
-// .giant
-//   .tagset
-//   .tag
-
-
-// {{>giant}}
-
-// template(name='giant')
-//   .giant.tagset
-
-// .giant eat
-// .giant drink
-// .giant shop
-
-
 
 
 template(name='intro')
@@ -291,41 +225,16 @@ template(name='intro')
         button.btn.clr-bg.prime(type="button").geolocate Go
 
 template(name="hero")
-  .hero(data-gray="{{gray 'hero'}}")
+  .hero
 
-    {{#constant}}
-    .headline
-      .inner
-        .tagset
-          span
-        .article
-          span
-        .sort
-          span
-        .tag
-          span
-        .noun
-          span
-
-    {{/constant}}
-
-    .list.row-fluid
-      .contents.span12
-
-        {{#isolate}}
-        {{#with getStore 'notes'}}
-        .notes.clr-text.prime.centered
-          p {{el 'strong' this.count}} offers | {{el 'strong' this.votes}} votes | {{el 'strong' 0}} purchases
-        {{/with}}
-        {{/isolate}}
-
-        hr
+    .list
+      .contents
 
         {{#constant}}
         .items
-          ul.tagset-list.span12(data-constant=true)
-          ul.tag-list.span12
-          ul.sort-list.span12(data-constant=true)
+          ul.tagset-list(data-constant=true)
+          ul.tag-list
+          ul.sort-list(data-constant=true)
         {{/constant}}
 
         hr

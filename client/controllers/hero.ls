@@ -1,257 +1,237 @@
 
-#////////////////////////////////////////////
-#  $$ globals and locals
 
+do ->
 
-HeroList = (opt) ->
-  fontSize = void
-  chars = _.flatten(opt.current).toString().length
-  opt.current[opt.name] ?= []
-
-  hero = d3.select(".headline ." + opt.name)
-    .selectAll("span")
-    .data(opt.current[opt.name])
-
-  hero
-    .enter!
-    .append "span"
-
-  hero
-    .exit!
-    .transition!
-    .style {}=
-      "opacity"   : 0
-      "font-size" : "0px"
-    .remove!
-
-  hero
-    .text -> it
-    .transition!
-    .style {}=
-      "opacity": "1"
-      "font-size": (d) ->
-        fontSize = (Math.round(15 + (200 / chars))) + "px"  unless fontSize
-        fontSize
-
-  return false  if opt.skipList
-
-  list = d3.select("ul." + opt.name + "-list")
+  Template.hero.events {}=
+    "click .list li": (event, tmpl) ->
+      # watchOffer.click()
 
-  item = list.selectAll("li")
-    .data(opt.collection)
+      tmpl.handle.stop!
 
-  item
-    .enter!
-    .insert "li"
+      story = d3.select(event.currentTarget).data()[0]
 
-  item
-    .datum (d, i) ->
-      d.status  = if _.contains opt.current[opt.name], d[opt.selector]
-                then "active"
-                else "inactive"
-      d
+      current  = Store.get("current_#{story.collection}")
+      active   = $(event.currentTarget).is ".active"
+      output   = void
 
-    .attr "class", (.status)
-    .html (d) ->
-      child = ""
-      if opt.name is "tag"
-        child = "<span class='badge #{d.status}'>#{d.rate}</span>"
-      d[opt.selector] + child
+      # console.log(story)
 
-  item
-    .exit!
-    .remove!
+      if active
+        output = _.without(current, story.name)
+        if story.collection is "tagsets"
+          nouns = Store.get("current_nouns")
+          Store.set "current_nouns", _.without(nouns, story.noun)
+      else
+        switch story.collection
+          when "tags"
+            output = current.concat(story.name) 
+            # console.log(output)
+          when "tagsets"
+            output = [story.name]
+            Store.set "current_nouns", [story.noun]
+            Store.set "current_tags", []
+          when "sorts"
 
-  active = list.selectAll("li.active")
-    .transition!
-    .style {}=
-      'font-size': '18px'
+            output = [story.name]
+            switch story.selector
+              when "random"
+                output = []
+                story.order = _.random(1, 100)
+              when "$near"
+                loc = Store.get("user_loc")
+                story.order = [loc.lat, loc.long]
 
-  inactive = list.selectAll("li.inactive")
-    .transition!
-    .style {}=
-      'font-size': '13px'
+            Store.set "current_sorts_specifier", story.specifier
+            Store.set "current_sorts_selector", story.selector
+            Store.set "current_sorts_order", story.order
 
+      Session.set "current_changed", story.collection
+      Store.set "current_#{story.collection}", output
 
-  [list, hero]
+    "click .headline .tag span": (event, tmpl) ->
+      selector = event.target.textContent
+      current = Store.get("current_tags")
+      out = _.without(current, selector)
+      Store.set "current_tags", out
 
 
 
 
-#////////////////////////////////////////////
-#  $$  hero
-Template.hero.events {}=
-  "click .list li": (event, tmpl) ->
-    # watchOffer.click()
+  HeroList = (opt) ->
 
-    tmpl.handle.stop!
+    opt.current[opt.name] ?= []
 
-    story = d3.select(event.currentTarget).data()[0]
+    list = d3.select("ul." + opt.name + "-list")
 
-    current  = Store.get("current_#{story.collection}")
-    active   = $(event.currentTarget).is ".active"
-    output   = void
+    item = list.selectAll("li")
+      .data(opt.collection)
 
-    # console.log(story)
+    item
+      .enter!
+      .insert "li"
 
-    if active
-      output = _.without(current, story.name)
-      if story.collection is "tagsets"
-        nouns = Store.get("current_nouns")
-        Store.set "current_nouns", _.without(nouns, story.noun)
-    else
-      switch story.collection
-        when "tags"
-          output = current.concat(story.name) 
-          # console.log(output)
-        when "tagsets"
-          output = [story.name]
-          Store.set "current_nouns", [story.noun]
-          Store.set "current_tags", []
-        when "sorts"
+    item
+      .datum (d, i) ->
+        d.status  = if _.contains opt.current[opt.name], d[opt.selector]
+                  then "active"
+                  else "inactive"
+        d
 
-          output = [story.name]
-          switch story.selector
-            when "random"
-              output = []
-              story.order = _.random(1, 100)
-            when "$near"
-              loc = Store.get("user_loc")
-              story.order = [loc.lat, loc.long]
+      .attr "class", (.status)
+      .html (d) ->
+        child = ""
+        if opt.name is "tag"
+          child = "<span class='badge #{d.status}'>#{d.rate}</span>"
+        d[opt.selector] + child
 
-          Store.set "current_sorts_specifier", story.specifier
-          Store.set "current_sorts_selector", story.selector
-          Store.set "current_sorts_order", story.order
+    item
+      .exit!
+      .remove!
 
-    Session.set "current_changed", story.collection
-    Store.set "current_#{story.collection}", output
-
-  "click .headline .tag span": (event, tmpl) ->
-    selector = event.target.textContent
-    current = Store.get("current_tags")
-    out = _.without(current, selector)
-    Store.set "current_tags", out
-
-
-
-
-
-
-
-
-
-Template.hero.created = ->
-  Session.set "heroRendered", false
-  Session.set "current_changed", null
-  unless @handle
-    @.handle = Meteor.autorun ->
-
-      uloc = Store.get('user_loc')
-
-      tagsets = Tagsets.find!fetch!
-      sorts   = Sorts.find!fetch!
-      tags    = Tag.rateAll!
+    active = list.selectAll("li.active")
+      .transition!
+      .style {}=
+        'font-size': '18px'
 
-      if tags and tags.length
+    inactive = list.selectAll("li.inactive")
+      .transition!
+      .style {}=
+        'font-size': '13px'
 
-        unless Store.get "current_tagsets"
-          Store.set "current_tagsets", ["eat"]
-          Store.set "current_tags", []
-          Store.set "current_sorts", ["latest"]
-          Store.set "current_sorts_specifier", "sort"
-          Store.set "current_sorts_selector", "updatedAt"
-          Store.set "current_sorts_order", "-1"
-          Store.set "current_nouns", ["food"]
 
-        out = 
-          tagsets: tagsets
-          tags: tags
-          sorts: sorts
+    list
 
-        as "collection", out
 
-        Session.set "heroDataReady", true
 
+  hero-tag = ->
+    console.log "HERO TAG"
 
+    list = d3.select 'ul.tag-list'
 
-  Deps.autorun ->
-    unless Session.get("heroRendered")
-      console.log "not rendered"
-      return false
-    unless Session.get("heroDataReady")
-      console.log "no data"
-      return false
+    px = -> it + 'px'
 
-    current = statCurrent!verbose
-    Collection = as("collection")
+    current = Store.get 'current_tags'
 
-    collection =
-      tagset: Collection.tagsets
-      tag   : _.filter( Collection.tags , (d) ->
-        _.contains current.tagset, d.tagset
-      )
-      sort  : Collection.sorts
-      noun  : Collection.tagsets
+    # dd    = as("collection").tags
+    dd    = dummydata
+    rates = _.pluck dd, 'rate'
+    max   = _.max rates
+    min   = _.min rates
 
-    tagList = $(".tag-list")
+    width = parse-int list.style 'width'
+    upper = (* 0.10) width
+    lower = (* 0.04) width
 
-    if Session.get("current_changed") is "tagsets"
-      tagList.data("jsp")?.destroy()
+    scale = d3.scale.linear!
+      ..domain [ min, max ]
+      ..range [ lower, upper ]
 
-    heroList =
-      tagset: new HeroList {}=
-        name: "tagset"
-        selector: "name"
-        leader: true
-        current: current
-        collection: collection.tagset
+    items = list.select-all 'li'
+      .data dd
 
-      # article: new HeroList {}=
-      #   name: "article"
-      #   skipItem: true
-      #   current: current
-      #   collection: collection.article
+    console.log \MAX, max
+    console.log \MIN, min
 
-      sort: new HeroList {}=
-        name: "sort"
-        selector: "name"
-        leader: false
-        current: current
-        collection: collection.sort
+    items.enter!insert 'li'
 
-      tag: new HeroList {}=
-        name: "tag"
-        selector: "name"
-        leader: false
-        current: current
-        collection: collection.tag
+    items
+      .datum ->
+        it.size = (* 10) round (/ 10) scale it.rate
+        it
+      .attr 'class', -> 
+        | _.contains current, it.name => "active"
+        | _                           => "inactive"
+      .text -> it.name
 
-      # noun: new HeroList {}=
-      #   name: "noun"
-      #   selector: "noun"
-      #   leader: true
-      #   current: current
-      #   collection: collection.noun
+    items.style {}=
+      'padding'   : -> '0 ' + px it.size
 
-    if Session.get("current_changed") isnt "tags"
-      tagList.jScrollPane {}=
-        horizontalGutter: 100
-        verticalGutter: 100
-        hideFocus: true
+    items.on 'click', -> console.log @__data__
 
-      tagDrag = tagList.find(".jspDrag")
-      tagDrag.css('display', 'none')
-      tagList.mouseenter ->
-        tagDrag.stop(true, true).fadeIn('fast')
+  Template.hero.created = ->
+    Session.set "heroRendered", false
+    Session.set "current_changed", null
+    unless @handle
+      @.handle = Meteor.autorun ->
 
-      tagList.mouseleave ->
-        tagDrag.stop(true, true).fadeOut('fast')
+        uloc = Store.get('user_loc')
 
-  Session.set("heroUpdated", true)
+        tagsets = Tagsets.find!fetch!
+        sorts   = Sorts.find!fetch!
+        tags    = Tag.rateAll!
 
+        if tags and tags.length
 
+          unless Store.get "current_tagsets"
+            Store.set "current_tagsets", ["eat"]
+            Store.set "current_tags", []
+            Store.set "current_sorts", ["latest"]
+            Store.set "current_sorts_specifier", "sort"
+            Store.set "current_sorts_selector", "updatedAt"
+            Store.set "current_sorts_order", "-1"
+            Store.set "current_nouns", ["food"]
 
-Template.hero.rendered = (tmpl) ->
-  Session.set "heroRendered", true  unless Session.get("heroRendered")
-  if Session.get("heroDataReady") => @handle and @handle.stop!
+          out = 
+            tagsets: tagsets
+            tags: tags
+            sorts: sorts
+
+          as "collection", out
+
+          Session.set "heroDataReady", true
+
+
+
+    Deps.autorun ->
+      unless Session.get("heroRendered")
+        console.log "not rendered"
+        return false
+      unless Session.get("heroDataReady")
+        console.log "no data"
+        return false
+
+      current = statCurrent!verbose
+      Collection = as("collection")
+
+      collection =
+        tagset: Collection.tagsets
+        tag   : _.filter( Collection.tags , (d) ->
+          _.contains current.tagset, d.tagset
+        )
+        sort  : Collection.sorts
+        # noun  : Collection.tagsets
+
+      tagList = $(".tag-list")
+
+      heroList =
+        tagset: new HeroList {}=
+          name: "tagset"
+          selector: "name"
+          leader: true
+          current: current
+          collection: collection.tagset
+
+        sort: new HeroList {}=
+          name: "sort"
+          selector: "name"
+          leader: false
+          current: current
+          collection: collection.sort
+
+        tag: hero-tag!
+
+        # tag: new HeroList {}=
+        #   name: "tag"
+        #   selector: "name"
+        #   leader: false
+        #   current: current
+        #   collection: collection.tag
+
+    Session.set("heroUpdated", true)
+
+
+
+  Template.hero.rendered = (tmpl) ->
+    Session.set "heroRendered", true  unless Session.get("heroRendered")
+    if Session.get("heroDataReady") => @handle and @handle.stop!
 

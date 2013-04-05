@@ -9,64 +9,67 @@ template(name='thisOffer')
 
 template(name='offer')
   .offer(data-tagset="{{this.tagset}}", data-active="{{active}}", style="background-image: url( 'http://i.imgur.com/JBQ74iO.jpg' ) ")
+
+    // section.image.span2
+    //   div(style="background-image: url({{this.image}})")
+
+    section.main
+
+      section.blurb
+        span.field(data-field='name') {{this.name}}
+        span.field(data-field='business') {{this.business}}
+
+      section.actions
+        mixin action(o)
+          a(class= o.ext, data-status="inactive", data-ext-selector= o.ext, data-toggle='tooltip', title= o.label, data-placement='bottom', data-trigger='hover')
+            i(class='glyph-#{ o.glyph}')
+
+        mixin action({ ext: "info",     label: "info",      glyph: "info-2"   })
+        mixin action({ ext: "reserve",  label: "purchase",  glyph: "tag-2"    })
+        mixin action({ ext: "message",  label: "message",   glyph: "envelope" })
+        mixin action({ ext: "map",      label: "locate",    glyph: "location" })
+
+    section.extensions
+
+      section.extension(data-extension="reserve")
+        {{#with market}}
+        {{> offer_market }}
+        {{/with}}
+
+      section.extension(data-extension="message")
+        .inner.span10
+          textarea(placeholder="Write a little note...")
+          .message-area
+        .inner.span2.margin.left.send send
+
+      section.extension(data-extension="map")
+        .inner.map.span12
+        .inner.address-container.span3
+          p.address
+            | {{this.street}}
+            br
+            | {{this.city}}, {{this.state}}
+            br
+            | {{#if this.zip}}{{this.zip}}{{/if}}
+          p.time
+            span arrive in
+            br
+            span.value
+
     section.data
       mixin data(opt)
         div(class= opt.selector )
-          i(class="glyph-" + opt.glyph).glyph
-          .metric.clr-bg
-            span.actual= opt.metric
-            span.after= opt.after
-          .bg
+          // i(class="glyph-" + opt.glyph).glyph
+          figcaption
+            span #{ opt.metric } #{ opt.after }
+
+          figure: .metric
 
 
       mixin data({ selector: "points", glyph: "plus", metric: "{{this.points}}", after:"points" })
       mixin data({ selector: "nearest", glyph: "location", metric: "{{this.nearest}}", after:"miles" })
       mixin data({ selector: "price", glyph: "tag-2", metric: "${{numberWithCommas this.price}}" })
       mixin data({ selector: "updatedAt", glyph: "history", metric: "{{styleDate this.updatedAt}}" })
-
-
-    // section.image.span2
-    //   div(style="background-image: url({{this.image}})")
-
-    section.main
-      span.field(data-field='name') {{this.name}}
-      p.field(data-field='description') {{this.description}}
-      span.field(data-field='business') {{this.business}}
-
-    section.actions
-      ul
-        mixin action(opt)
-          li(class= opt.selector, data-status="inactive", data-selector= opt.selector)
-            a(href="#")= opt.label
-
-        mixin action({ selector: "reserve", label: "purchase" })
-        mixin action({ selector: "message", label: "message" })
-        mixin action({ selector: "map", label: "locate" })
-
-    section.extension(data-extension="reserve")
-      {{#with market}}
-      {{> offer_market }}
-      {{/with}}
-
-    section.extension(data-extension="message")
-      .inner.span10
-        textarea(placeholder="Write a little note...")
-        .message-area
-      .inner.span2.margin.left.send send
-
-    section.extension(data-extension="map")
-      .inner.map.span12
-      .inner.address-container.span3
-        p.address
-          | {{this.street}}
-          br
-          | {{this.city}}, {{this.state}}
-          br
-          | {{#if this.zip}}{{this.zip}}{{/if}}
-        p.time
-          span arrive in
-          br
-          span.value
 
 
 template(name='offer_market')

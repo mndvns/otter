@@ -1,10 +1,19 @@
-var dwollaClientId, dwollaClientSecret, dwollaUrl, require, MongoDB, Future, Alert, allowUser, mapper;
+var dwollaClientId, dwollaClientSecret, dwollaUrl, Alert, allowUser, mapper;
+Meteor.startup(function(){
+  var i, j;
+  i = 0;
+  j = [" ", " ", "   ____", "  / __/___  ___ _ ____ ____ ___  _    __", " _\\ \\ / _ \\/ _ `// __// __// _ \\| |/|/ /", "/___// .__/\\_,_//_/  /_/   \\___/|__,__/ ", "    /_/", " ", " "];
+  while (i < j.length) {
+    console.log("         ", j[i]);
+    i += 1;
+  }
+  return Locations._ensureIndex({
+    geo: "2d"
+  });
+});
 dwollaClientId = "SU4FlmQ2/mSfvexkPIE/6I+LV5dIoeFoNXexYGTUKLwAXgC/ki";
 dwollaClientSecret = "+j15d9+/pUvpInw4lR+5rfyH+ECZURvg8y/7msgs1Qv2VvuIg2";
 dwollaUrl = "https://www.dwolla.com/oauth/v2/token";
-require = __meteor_bootstrap__.require;
-MongoDB = require("mongodb");
-Future = require("fibers/future");
 (function(){
   var mp;
   mp = Meteor.publish;
@@ -61,7 +70,10 @@ Future = require("fibers/future");
     return Points.find();
   });
   mp("all_offers", function(){
-    return Offers.find();
+    var out;
+    out = Offers.find();
+    this.ready();
+    return out;
   });
   mp("all_tags", function(){
     return Tags.find();
@@ -92,18 +104,11 @@ Alert = (function(){
   return Alert;
 }());
 Accounts.onCreateUser(function(options, user){
+  user._id = new Meteor.Collection.ObjectID().toHexString();
   user.type = "basic";
-  user.karma = 50;
-  user.logins = 0;
   if (options.profile) {
     user.profile = options.profile;
   }
-  user.meta = {
-    firstPages: {
-      home: true,
-      account: true
-    }
-  };
   return user;
 });
 Meteor.users.allow({
@@ -151,16 +156,16 @@ allowUser = function(collections){
   }
   return results$;
   function fn$(userId, doc){
-    return userId === doc.ownerId;
+    return userId === doc.ownerId || My.user().type === 'admin';
   }
   function fn1$(userId, doc){
-    return userId === doc.ownerId;
+    return userId === doc.ownerId || My.user().type === 'admin';
   }
   function fn2$(userId, doc){
-    return userId === doc.ownerId;
+    return userId === doc.ownerId || My.user().type === 'admin';
   }
 };
-allowUser([Offers, Points, Tags, Locations, Pictures, Markets, Purchases, Customers]);
+allowUser([Offers, Points, Tags, Tagsets, Locations, Pictures, Markets, Purchases, Customers]);
 mapper = function(a){
   var map;
   map = _.isArray(a)

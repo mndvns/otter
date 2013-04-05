@@ -1,25 +1,26 @@
-var distance, Color, Time, Stopwatch;
-distance = function(lat1, lon1, lat2, lon2, unit){
-  var radlat1, radlat2, radlon1, radlon2, theta, radtheta, dist;
-  radlat1 = Math.PI * lat1 / 180;
-  radlat2 = Math.PI * lat2 / 180;
-  radlon1 = Math.PI * lon1 / 180;
-  radlon2 = Math.PI * lon2 / 180;
-  theta = lon1 - lon2;
-  radtheta = Math.PI * theta / 180;
-  dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-  dist = Math.acos(dist);
-  dist = dist * 180 / Math.PI;
-  dist = dist * 60 * 1.1515;
-  if (unit === "K") {
-    dist = dist * 1.609344;
-  }
-  if (unit === "N") {
-    dist = dist * 0.8684;
-  }
-  return dist;
+var arrayRepeat, numberWithCommas, Time, Stopwatch;
+String.prototype.toProperCase = function(){
+  return this.replace(/\w\S*/g, function(txt){
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
 };
-Color = net.brehaut.Color;
+String.prototype.repeat = function(num){
+  var out;
+  out = new Array(num + 1).join("");
+  return out;
+};
+arrayRepeat = function(value, len){
+  var out;
+  len += 1;
+  out = [];
+  while (len -= 1) {
+    out.push(value);
+  }
+  return out;
+};
+numberWithCommas = function(x){
+  return x != null ? x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : void 8;
+};
 Time = {
   now: function(){
     return Date.now();

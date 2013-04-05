@@ -2,7 +2,7 @@ var handleActions;
 handleActions = function(event, tmpl, cb){
   var eventEl, extension, targetEl;
   eventEl = event.currentTarget;
-  extension = eventEl.getAttribute("data-selector");
+  extension = eventEl.getAttribute("data-ext-selector");
   targetEl = $(tmpl.find("section.extension[data-extension='" + extension + "']"));
   if (eventEl.getAttribute("data-status") === "inactive") {
     eventEl.setAttribute("data-status", "active");
@@ -42,17 +42,15 @@ Template.offer.helpers({
   }
 });
 Template.offer.events({
-  'click .image': function(event, tmpl){
-    return console.log(this);
-  },
-  'click .main': function(event, tmpl){
+  'click .blurb': function(event, tmpl){
     var user;
     user = Meteor.users.findOne({
       _id: this.ownerId
     });
+    console.log("OFFER: ", this);
     return console.log("USER: ", user != null ? user.username : void 8, user);
   },
-  "click section.actions li.map": function(event, tmpl){
+  "click section.actions a.map": function(event, tmpl){
     var targetEl;
     targetEl = tmpl.find("section.extension[data-extension='map'] .inner.map");
     return handleActions(event, tmpl, function(){
@@ -87,12 +85,12 @@ Template.offer.events({
       });
     });
   },
-  "click section.actions li.message": function(event, tmpl){
+  "click section.actions a.message": function(event, tmpl){
     return handleActions(event, tmpl, function(){
       return console.log("clicked messages");
     });
   },
-  "click section.actions li.reserve": function(event, tmpl){
+  "click section.actions a.reserve": function(event, tmpl){
     return handleActions(event, tmpl, function(){
       return console.log("clicked buy");
     });
@@ -123,6 +121,45 @@ Template.offer.events({
     });
   }
 });
+Template.offer.rendered = function(){
+  var range, keys, i$, len$, k, d, s, r, out;
+  Session.whenTrue(['derp', 'herp'], function(){
+    return console.log("DERP AND HERP");
+  });
+  $(this.findAll('.actions a')).tooltip();
+  if (Session.get("shift_area") === "account" || Meteor.Router.page() === "account_offer") {
+    return;
+  }
+  range = statRange();
+  keys = [
+    {
+      name: "points",
+      invert: false
+    }, {
+      name: "nearest",
+      invert: true
+    }, {
+      name: "price",
+      invert: true
+    }, {
+      name: "updatedAt",
+      invert: false
+    }
+  ];
+  for (i$ = 0, len$ = keys.length; i$ < len$; ++i$) {
+    k = keys[i$];
+    d = k.name;
+    s = d3.scale.linear().domain([range.min[d], range.max[d]]);
+    r = s(parseInt(this.data[d])) * 100;
+    out = k.invert === false
+      ? r + '%'
+      : Math.abs(r - 100) + '%';
+    $(this.find("section.data ." + d + " .metric")).css('width', out);
+  }
+  if (typeof watchOffer != 'undefined' && watchOffer !== null) {
+    return watchOffer.stop();
+  }
+};
 Template.offer_market.events({
   'click .payment-form button': function(e, t){
     var form, offer, accessToken, card, custId;
@@ -225,42 +262,4 @@ Template.offer_market.rendered = function(){
       onFieldSuccess: function(elem, constraints, ParsleyField){}
     }
   });
-};
-Template.offer.rendered = function(){
-  var range, keys, i$, len$, k, d, s, r, out;
-  Session.whenTrue(['derp', 'herp'], function(){
-    return console.log("DERP AND HERP");
-  });
-  if (Session.get("shift_area") === "account" || Meteor.Router.page() === "account_offer") {
-    return;
-  }
-  range = statRange();
-  keys = [
-    {
-      name: "points",
-      invert: false
-    }, {
-      name: "nearest",
-      invert: true
-    }, {
-      name: "price",
-      invert: true
-    }, {
-      name: "updatedAt",
-      invert: false
-    }
-  ];
-  for (i$ = 0, len$ = keys.length; i$ < len$; ++i$) {
-    k = keys[i$];
-    d = k.name;
-    s = d3.scale.linear().domain([range.min[d], range.max[d]]);
-    r = s(parseInt(this.data[d])) * 100;
-    out = k.invert === false
-      ? r + '%'
-      : Math.abs(r - 100) + '%';
-    $(this.find("section.data ." + d + " .metric")).css('width', out);
-  }
-  if (typeof watchOffer != 'undefined' && watchOffer !== null) {
-    return watchOffer.stop();
-  }
 };

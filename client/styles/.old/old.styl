@@ -1,0 +1,417 @@
+
+
+// nav.ceiling
+//   $padding = 30px
+//   fixed top right
+//   trans(height background)
+//   min-height ceiling-height
+//   width 100%
+//   z-index 200
+//   padding 0 $padding
+//   box-sizing border-box
+//   box-shadow 0 -10px 5px 10px rgba(black, .4), inset 0 20px 70px -20px rgba(white, .1)
+//   border-bottom 1px solid rgba(black, .9)
+//   &[data-rally=alert]
+//     .toggler-group
+//       opacity 0
+// 
+//   i
+//     padding-right 10px
+// 
+//   [data-signed-in]
+//     relative right
+//     span
+//       relative right
+//     .badge
+//       background transparent
+//       border 1px solid
+//       margin-left 10px
+// 
+//   .toggler-group
+//     trans(opacity)
+//     absolute top
+//     opacity 1
+//     z-index 100
+//     vertical-align middle
+//     line-height ceiling-height
+// 
+//     .brand
+//       height 50px
+//       width 200px
+// 
+//       background url("/connected-logo.png")
+//       background-size 60%
+//       background-position 0 50%
+//       background-repeat no-repeat
+//       opacity 1
+// 
+//       // font-size 20px
+//       // font-weight bold
+// 
+//     &.left
+//       left $padding
+//     &.right
+//       right $padding
+// 
+//       .badge
+//         &:hover
+//           color white
+//     span
+//     a
+//       color rgba(white, .9)
+//       text-shadow 0 -1px 0 rgba(black, .6)
+//     a
+//       &.active
+//         span
+//           color white
+//       relative top
+//       span
+//         line-height ceiling-height
+//         vertical-align middle
+// 
+//   a
+//     &:hover
+//       color rgba(white, .7)
+//   .btn.clr-bg
+//     &:hover
+//       background rgba(white, .4)
+//   .terrace > div
+//     display none
+//   .terrace
+//     relative top
+//     z-index 50
+//     width 100%
+//     // display none
+//     // opacity 0
+//     overflow hidden
+//     padding fontSize 0 (fontSize / 2)
+//     .inputs
+//     .controls
+//       float none
+//       display inline-block
+//       text-align center
+//       margin 0 auto
+//       width 100%
+//       button
+//         padding-left 3px!important
+//         padding-right 3px!important
+//         box-sizing content-box
+// 
+//     input
+//     button
+//     .alert.in
+//     .navigation
+//       margin-bottom (fontSize / 2)
+//       text-align center
+//       float none
+//       border none
+// 
+//     .navigation
+//       text-align center
+//       color rgba(white, .1)
+// 
+//     [data-slip-show='false']
+//       display none
+//       opacity 0
+// 
+//     p
+//     .alert
+//     buttons.active
+//     a.active
+//       color rgba(white, .7)!important
+// 
+// 
+// @keyframes ceiling-expand
+//   from
+//     height 0%
+//   to
+//     height 100%
+
+
+// .navbar
+//   .navbar-inner
+//     border-radius 0
+// 
+// .navbar.topnav
+//   height = topnav-height
+//   relative top
+//   margin-top ceiling-height
+//   background none
+//   width 100%
+//   z-index 100
+//   opacity 1
+//   .container
+//     relative top
+//     padding-top 0
+//   .navbar-inner
+//     background none!important
+//     border none
+//     box-shadow none
+// 
+//   a.shift
+//   .links a
+//     margin-top topnav-padding
+//     opacity 0.7
+//     text-shadow 0 1px 0 rgba(white, .2)
+//     &.active
+//     &:hover
+//       opacity 1
+//       text-shadow 0 -1px 0 rgba(black, .2)
+// 
+//   ul.links
+//     absolute top
+//     // box-shadow 0 0 30px white
+//     border-bottom 1px solid rgba(white, .9)
+//     box-shadow inset 0 20px 120px -20px rgba(white, .2), inset 0 -15px 35px -15px rgba(black, .1), inset 0 -5px 3px -5px rgba(black, .2)
+//     overflow hidden
+//     margin 0 auto
+//     text-align center
+//     width 100%
+//     z-index 2
+//     a
+//       height topnav-height
+//       box-sizing border-box
+//       border-bottom 2px solid
+//       display inline-block
+//       line-height 35px
+//       padding 0 20px 0
+//       cursor default
+//       trans(color border-width)
+//       transition-duration 50ms
+//       background-image url("/link_shadow.png")
+//       background-size cover
+//       background-repeat no-repeat
+//       background-position 50% 50px
+//       &.active
+//       &.inactive:hover
+//       &:hover
+//         color white
+//       &.active
+//         background-position 50% 0px
+//       &.inactive
+//         filter grayscale(50%)
+//       span
+//         span-style()
+//         display block
+//         line-height 20px
+//       i
+//         height = height * 0.4
+//         height height
+//         line-height height
+//         font-size height
+//         margin-top 5px
+// 
+//   ul.sublinks
+//     relative top left
+//     padding-top (ceiling-height + topnav-padding + 5px)
+//     text-align center
+//     width 80%
+//     left 10%
+//     margin-left 0
+//     .separator
+//       position relative
+//       z-index 3
+//       border-left 1px solid #eee
+//       color transparent
+//       display inline-block
+//       margin = 20px
+//       margin-left margin
+//       padding 0 margin 0 0
+//       top 2px
+//       height 15px
+//     .inner
+//       absolute relative top
+//       margin-bottom -10px
+//     .bg
+//       absolute top
+//       opacity = 1
+//       background linear-gradient(left, 0% rgba(white, 0), 10% rgba(white, opacity), 90% rgba(white, opacity), 100% rgba(white, 0))
+//       height 100%
+//       width 100%
+//     a
+//       relative top
+//       display inline-block
+//       padding 10px
+//       z-index 2
+//       li
+//         color #ccc
+//       &.inactive:hover
+//         li
+//           color #777
+//       &.active
+//         li
+//           color inherit
+//       span
+//         span-style()
+// 
+//     hr
+//       relative bottom -10px
+//       margin-top 0
+// 
+// 
+//   .shift-block
+//     &.left
+//       left fontSize
+//     &.right
+//       right fontSize
+// 
+//   .shift-block
+//   a.shift
+//     position absolute
+//     display inline-block
+//     height height
+//     line-height height - 5
+//     font-size (height / 2)
+//     z-index 100
+//     width (fontSize * 3)
+// 
+//   a.shift
+//     text-align center
+//     &[disabled]
+//       opacity 0.3
+//       color rgba(black, .3)
+//       text-shadow 0 0 20px gray
+//     &:hover
+//       color rgba(black, 0.5)
+// 
+// 
+// 
+// 
+// .navbar.account-offer
+//   padding-top 20px
+//   .navbar-inner
+//     padding 0 0
+//     background none
+//     border none
+//     box-shadow none
+//   ul
+//     width 100%
+//   li
+//     height = 40px
+//     font-size round(fontSize * .75)
+//     line-height height
+//     height height
+//     text-transform uppercase
+//     text-align center
+//     color rgba(white, 0.7)
+//     letter-spacing 1px
+//     text-shadow none
+//     font-weight 300
+//     opacity .6
+//     *
+//       vertical-align middle
+//     &.active
+//       opacity 1
+//     &:hover
+//       opacity 0.9
+//     i
+//       font-size 15px
+//       padding-right 5px
+//       line-height height
+// 
+// .content > div > .container
+//   position relative
+//   // margin-top 150px
+// 
+// spanner(a, b)
+//   if odd(b)
+//     width floor(a * b)
+//   if even(b)
+//     width ceil(a * b)
+//   margin-left 0
+//   &.margin
+//     if odd(b)
+//       width floor((a * b) - gap)
+//     if even(b)
+//       width floor((a * b) - gap)
+//     &.left
+//       margin-left gap
+//     &.right
+//       margin-right gap
+//     &.left.right
+//       if odd(b)
+//         width floor((a * b) - (gap * 2))
+//       if even(b)
+//         width ceil((a * b) - (gap * 2))
+// 
+// Spanner(a)
+//   u = (a / 12)
+//   .container
+//   .navbar-static-top .container
+//   .navbar-fixed-top .container
+//   .navbar-fixed-bottom.container
+//     width a
+//   .long
+//     .span12
+//     &.span12
+//       spanner(u, 12)
+//     .span11 
+//     &.span11 
+//       spanner(u, 11)
+//     .span10 
+//     &.span10 
+//       spanner(u, 10)
+//     .span9 
+//     &.span9 
+//       spanner(u, 9)
+//     .span8 
+//     &.span8 
+//       spanner(u, 8)
+//     .span7 
+//     &.span7 
+//       spanner(u, 7)
+//     .span6 
+//     &.span6 
+//       spanner(u, 6)
+//     .span5 
+//     &.span5 
+//       spanner(u, 5)
+//     .span4 
+//     &.span4 
+//       spanner(u, 4)
+//     .span3 
+//     &.span3 
+//       spanner(u, 3)
+//     .span2 
+//     &.span2 
+//       spanner(u, 2)
+//     .span1 
+//     &.span1 
+//       spanner(u, 1)
+// 
+// 
+// Spanner( 940px )
+// 
+// .extend
+//   padding-right (gap * .5)
+// 
+// @media (min-width: 1200px)
+//   Spanner( 1170px )
+//   .extend
+//     padding-right gap
+// 
+// @media (min-width: 768px) and (max-width: 979px)
+//   Spanner( 724px )
+// 
+// @media (min-width: 481px) and (max-width: 767px)
+//   Spanner( 480px )
+// 
+// @media (max-width: 480px)
+//   .container
+//     width auto
+//   .long
+//     [class*="span"]
+//       width 100%!important
+//       margin-left 0!important
+//   .extend
+//     padding-right 0
+// 
+// .long
+//   textarea
+//   input
+//     box-sizing border-box
+//   input
+//     height round(fontSize * 2.5)
+//   [class*="span"]
+//     float left
+

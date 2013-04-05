@@ -1,7 +1,11 @@
 node_modules/
 .node_modules
-Cakefile
-lock.json
+
 .meteor
-uploads
 .DS_Store
+
+lock.json
+uploads
+packages
+
+Cakefile

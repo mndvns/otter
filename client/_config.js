@@ -14,7 +14,9 @@ var Color, Store;
   ms("tagsets");
   ms("sorts");
   ms("points");
-  ms("all_offers");
+  ms("all_offers", function(){
+    return Session.set('offer_subscribe_ready', true);
+  });
   ms("all_tags");
   ms("all_markets");
   ms("purchases");

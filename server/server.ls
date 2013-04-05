@@ -1,26 +1,37 @@
 
+Meteor.startup ->
+  i = 0
+  j = [
+    " ", " ", "   ____", "  / __/___  ___ _ ____ ____ ___  _    __",
+    " _\\ \\ / _ \\/ _ `// __// __// _ \\| |/|/ /",
+    "/___// .__/\\_,_//_/  /_/   \\___/|__,__/ ", "    /_/", " ", " "]
+  while i < j.length
+    console.log "         ", j[i]
+    i += 1
+
+  Locations._ensureIndex geo: "2d"
+
 # secrets
 dwollaClientId = "SU4FlmQ2/mSfvexkPIE/6I+LV5dIoeFoNXexYGTUKLwAXgC/ki"
 dwollaClientSecret = "+j15d9+/pUvpInw4lR+5rfyH+ECZURvg8y/7msgs1Qv2VvuIg2"
 dwollaUrl = "https://www.dwolla.com/oauth/v2/token"
 
-require  = __meteor_bootstrap__.require
-MongoDB  = require "mongodb"
-Future   = require "fibers/future"
 
-# Colors = require "colors"
-# fs       = require "fs"
+
+# require  = Npm.require
+# MongoDB  = require "mongodb"
+# Future   = require "fibers/future"
+
+# colors = Npm.require 'colors'
+
 # console.log(Meteor.settings)
 
-# publish
 do ->
   mp = Meteor.publish
   mp "all_locations", ->
     out = Locations.find!
     @ready!
     out
-
-
 
   # mp "relations", (loc)->
   #   miles  = 2000
@@ -57,7 +68,11 @@ do ->
   mp "sorts",         -> Sorts.find {}, sort: list_order: 1
   mp "points",        -> Points.find!
 
-  mp "all_offers",    -> Offers.find!
+  mp "all_offers",    ->
+    out = Offers.find!
+    @ready!
+    out
+
   mp "all_tags",      -> Tags.find!
   mp "all_markets",   -> Markets.find!
 
@@ -78,18 +93,15 @@ class Alert
       text: it.text
       wait: it.wait or false
 
-# accounts
+
 Accounts.on-create-user (options, user) ->
+  user._id  = new Meteor.Collection.ObjectID!to-hex-string!
   user.type = "basic"
-  user.karma = 50
-  user.logins = 0
-  if options.profile
-    user.profile = options.profile
-  user.meta =
-    firstPages:
-      home: true
-      account: true
+
+  if options.profile => user.profile = options.profile
+
   user
+
 
 Meteor.users.allow {}=
   insert: (userId, docs) ->
@@ -114,11 +126,11 @@ allow-user = ( collections ) ->
   for c in collections
     c.allow {}=
       insert: (userId, doc) ->
-        userId is doc.ownerId
+        (userId is doc.ownerId) or (My.user!type is 'admin')
       update: (userId, doc) ->
-        userId is doc.ownerId
+        (userId is doc.ownerId) or (My.user!type is 'admin')
       remove: (userId, doc) ->
-        userId is doc.ownerId
+        (userId is doc.ownerId) or (My.user!type is 'admin')
       fetch: ['ownerId']
 
 
@@ -126,6 +138,7 @@ allow-user([
   Offers
   Points
   Tags
+  Tagsets
   Locations
   Pictures
 

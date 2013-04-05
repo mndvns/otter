@@ -1,4 +1,4 @@
-var type, My;
+var type, ref$, arrayRepeat, numberWithCommas, self;
 type = function(it){
   var classToType, i$, ref$, len$, name, myClass;
   if (it == null) {
@@ -15,7 +15,33 @@ type = function(it){
   }
   return "object";
 };
-My = {
+this.A = this.App = Meteor.App = {};
+this.log = function(){
+  return console.log(arguments);
+};
+ref$ = String.prototype;
+ref$.toProperCase = function(){
+  return this.replace(/\w\S*/g, function(txt){
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+};
+ref$.repeat = function(it){
+  return new Array(it + 1).join("");
+};
+arrayRepeat = function(value, len){
+  var out;
+  len += 1;
+  out = [];
+  while (len -= 1) {
+    out.push(value);
+  }
+  return out;
+};
+numberWithCommas = function(x){
+  return x != null ? x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : void 8;
+};
+self = this;
+this.My = {
   env: function(){
     switch (false) {
     case !Meteor.isServer:
@@ -35,7 +61,7 @@ My = {
   userId: function(){
     switch (false) {
     case !Meteor.isServer:
-      return Meteor.userId();
+      return self.userId;
     case !Meteor.isClient:
       return Meteor.userId();
     }
@@ -104,6 +130,11 @@ My = {
     }, typeof this[list] === 'function' ? this[list]() : void 8);
   })
 };
+this.Is = {
+  mine: function(it){
+    return My.userId() === (it != null ? it.ownerId : void 8);
+  }
+};
 Meteor.methods({
   upvoteEvent: function(offer){
     if (typeof this.unblock === 'function') {
@@ -126,10 +157,13 @@ Meteor.methods({
       }
     });
   },
-  instance_destroy_mine: function(it){
-    return My.env()[it].remove({
-      ownerId: My.userId()
-    });
+  instance_destroy_mine: function(){
+    var userId;
+    console.log('GOT INSIDE');
+    userId = My.userId();
+    return each(function(it){
+      return it.destroy();
+    }, Offer.mine().fetch());
   }
 });
 function curry$(f, bound){

@@ -3,7 +3,7 @@
 
 handleActions = (event, tmpl, cb) ->
   eventEl = event.currentTarget
-  extension = eventEl.getAttribute("data-selector")
+  extension = eventEl.getAttribute("data-ext-selector")
   targetEl = $(tmpl.find("section.extension[data-extension='" + extension + "']"))
   if eventEl.getAttribute("data-status") is "inactive"
     eventEl.setAttribute "data-status", "active"
@@ -36,16 +36,16 @@ Template.offer.events {}=
   # 'click li, click button, click a': (e, t)->
   #   Session.set 'selected_offer', @
 
-  'click .image': (event, tmpl) ->
-    console.log(this)
+  'click .blurb': (event, tmpl) ->
 
 
-  'click .main': (event, tmpl) ->
     user = Meteor.users.findOne _id: @owner-id
+    console.log "OFFER: ", @
     console.log "USER: ", user?.username, user
 
 
-  "click section.actions li.map": (event, tmpl) ->
+  "click section.actions a.map": (event, tmpl) ->
+
     target-el = tmpl.find("section.extension[data-extension='map'] .inner.map")
     handle-actions event, tmpl, ->
       map = {}
@@ -79,12 +79,12 @@ Template.offer.events {}=
         tmpl.find(".time span.value").textContent = response.routes[0].legs[0].duration.text
 
 
-  "click section.actions li.message": (event, tmpl) ->
+  "click section.actions a.message": (event, tmpl) ->
     handleActions event, tmpl, ->
       console.log "clicked messages"
 
 
-  "click section.actions li.reserve": (event, tmpl) ->
+  "click section.actions a.reserve": (event, tmpl) ->
     handleActions event, tmpl, ->
       console.log "clicked buy"
 
@@ -111,6 +111,46 @@ Template.offer.events {}=
 
       # if @data._id in map (.target-id), My.prompts!
       #   $ @find '.prompt-area' .slide-down!
+
+
+
+Template.offer.rendered = ->
+  Session.when-true <[ derp herp ]>, -> console.log "DERP AND HERP"
+
+  $(@find-all '.actions a').tooltip!
+
+  if Session.get("shift_area") is "account" or Meteor.Router.page! is "account_offer"
+    return
+
+  range = stat-range!
+  keys = [
+    name: "points"
+    invert: false
+  ,
+    name: "nearest"
+    invert: true
+  ,
+    name: "price"
+    invert: true
+  ,
+    name: "updatedAt"
+    invert: false
+  ]
+
+  for k in keys
+    d = k.name
+    s = d3.scale.linear!domain([range.min[d], range.max[d]])
+    r = s(parse-int @data[d]) * 100
+
+    out = if k.invert is false
+          then r + '%'
+          else Math.abs(r - 100) + '%'
+
+    $( @find "section.data .#{d} .metric" ).css 'width', out
+
+  if watch-offer?
+    watch-offer.stop!
+
 
 
 Template.offer_market.events {}=
@@ -217,56 +257,4 @@ Template.offer_market.rendered = ->
 
 
 
-
-
-# adjustOfferElements = (main) ->
-# 
-#   kids   = main.children
-# 
-#   bottom = kids[kids.length - 1].offsetTop
-# 
-#   padding_top = (170 - bottom) * 0.3
-# 
-#   return padding_top
-# 
-# set-padding = (section_main) ~>
-#   padding_top = adjust-offer-elements(section_main)
-#   $(section_main).css("padding-top", padding_top)
-
-Template.offer.rendered = ->
-  Session.when-true <[ derp herp ]>, -> console.log "DERP AND HERP"
-
-  # set-padding(@find("section.main"))
-
-  if Session.get("shift_area") is "account" or Meteor.Router.page! is "account_offer"
-    return
-
-  range = stat-range!
-  keys = [
-    name: "points"
-    invert: false
-  ,
-    name: "nearest"
-    invert: true
-  ,
-    name: "price"
-    invert: true
-  ,
-    name: "updatedAt"
-    invert: false
-  ]
-
-  for k in keys
-    d = k.name
-    s = d3.scale.linear!domain([range.min[d], range.max[d]])
-    r = s(parse-int @data[d]) * 100
-
-    out = if k.invert is false
-          then r + '%'
-          else Math.abs(r - 100) + '%'
-
-    $( @find "section.data .#{d} .metric" ).css 'width', out
-
-  if watch-offer?
-    watch-offer.stop!
 

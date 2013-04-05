@@ -1,13 +1,10 @@
-var checkHelpMode, Sparrow, statCurrent, statRange, slipElements, colorFill, Conf;
-checkHelpMode = function(){
-  return $(".wrapper").hasClass("help-mode");
-};
+var Sparrow, statCurrent, statRange, Conf;
 Sparrow = {};
 Sparrow.shift = function(){
   return Session.get("shift_area");
 };
 statCurrent = function(){
-  var out, ref$, article;
+  var out;
   out = {
     query: {
       tagset: Store.get("current_tagsets"),
@@ -23,23 +20,9 @@ statCurrent = function(){
       tagset: Store.get("current_tagsets"),
       tag: Store.get("current_tags"),
       sort: Store.get("current_sorts"),
-      sort_selector: Store.get("current_sorts_selector"),
-      noun: Store.get("current_nouns")
+      sort_selector: Store.get("current_sorts_selector")
     }
   };
-  out.verbose.tagset = (ref$ = out.verbose.tagset) != null && ref$.length
-    ? out.verbose.tagset
-    : ["find"];
-  out.verbose.noun = (ref$ = out.verbose.noun) != null && ref$.length
-    ? out.verbose.noun
-    : ["offer"];
-  out.verbose.article = (ref$ = out.verbose.sort) != null && ref$.length
-    ? ["the"]
-    : ["some"];
-  if (out.verbose.tagset.toString() === "shop") {
-    article = out.verbose.article.toString();
-    out.verbose.article = ["for " + article];
-  }
   return out;
 };
 statRange = function(){
@@ -64,41 +47,8 @@ Template.wrapper.rendered = function(){
   return Session.setDefault("rendered_wrapper", true);
 };
 Template.wrapper.events({
-  "click a[data-toggle-mode='sign-in']": function(event, tmpl){
-    var speed, selector, rival, target, sign;
-    speed = 300;
-    selector = $(event.currentTarget);
-    rival = $(".toggler-group.left");
-    target = $(tmpl.find(".terrace"));
-    sign = $('#sign-in');
-    selector.toggleClass("active");
-    if (selector.is(".active")) {
-      rival.animate({
-        opacity: 0
-      }, "fast");
-      sign.show();
-      return target.slipShow({
-        speed: speed,
-        haste: 1
-      });
-    } else {
-      target.slipHide({
-        speed: speed,
-        haste: 1
-      }, function(){
-        return sign.hide();
-      });
-      rival.show();
-      return rival.animate({
-        opacity: 1
-      }, "fast");
-    }
-  },
   "click .shift": function(event, tmpl){
     var dir, area, page, current, store_area, store_sub_area, sub_area;
-    if (checkHelpMode()) {
-      return;
-    }
     if (event.currentTarget.hasAttribute("disabled")) {
       return;
     }
@@ -115,278 +65,7 @@ Template.wrapper.events({
     return Session.set("shift_current", current);
   }
 });
-slipElements = function(opt){
-  if ($select.hasClass("active")) {
-    $mode.show();
-    $rival.fadeOut('fast');
-    $target.slipShow({
-      speed: $speed,
-      haste: 1
-    });
-    return $target.slipHide([
-      {
-        speed: $speed,
-        haste: 1
-      }, function(){
-        $mode.hide();
-        return $rival.fadeIn('fast');
-      }
-    ]);
-  }
-};
-Template.ceiling.events({
-  "click .navigation a": function(event, tmpl){
-    var target, active, selectEl, data, hide, res$, i$, ref$, len$, h, show, s, speed, type, text, button;
-    target = event.currentTarget;
-    active = target.getAttribute("class");
-    if (active === "active") {
-      return;
-    }
-    selectEl = $(target);
-    selectEl.addClass("active");
-    selectEl.siblings().removeClass("active");
-    data = selectEl.data()["accountData"];
-    res$ = [];
-    for (i$ = 0, len$ = (ref$ = data.hide).length; i$ < len$; ++i$) {
-      h = ref$[i$];
-      res$.push(tmpl.find("[data-account='" + h + "']"));
-    }
-    hide = res$;
-    res$ = [];
-    for (i$ = 0, len$ = (ref$ = data.show).length; i$ < len$; ++i$) {
-      s = ref$[i$];
-      res$.push(tmpl.find("[data-account='" + s + "']"));
-    }
-    show = res$;
-    speed = 150;
-    $(hide).slipHide([
-      {
-        speed: speed,
-        haste: 1
-      }, function(){
-        return $(show).slipShow({
-          speed: speed,
-          haste: 1
-        });
-      }
-    ]);
-    type = data.type;
-    text = target.textContent;
-    button = tmpl.find("button[type='submit']");
-    button.setAttribute("data-account-submit-type", data.type);
-    return button.textContent = data.text;
-  },
-  "click button[type='submit']": function(event, tmpl){
-    var username, password, email, password2, forgotEmail, type, handleResponse, errors;
-    event.preventDefault();
-    username = tmpl.find('input#username').value;
-    password = tmpl.find('input#password').value;
-    email = tmpl.find('input#email').value;
-    password2 = tmpl.find('input#password2').value;
-    forgotEmail = tmpl.find('input#forgot-email').value;
-    type = event.currentTarget.getAttribute("data-account-submit-type");
-    handleResponse = function(err, res){
-      if (err) {
-        return $(tmpl.find(".alert")).text(err.reason).addClass("in");
-      }
-    };
-    if (type === "sign" || type === "create") {
-      errors = [];
-      if (!username) {
-        errors.push("username");
-      }
-      if (!password) {
-        errors.push("password");
-      }
-      if (errors.length) {
-        handleResponse({
-          reason: "Must enter a " + errors.join(" and ")
-        });
-        return;
-      }
-      switch (type) {
-      case "create":
-        errors = [];
-        if (username.length < 5) {
-          errors.push("username");
-        }
-        if (password.length < 5) {
-          errors.push("password");
-        }
-        if (errors.length) {
-          handleResponse({
-            reason: errors.join(" and ") + " must be at least five characters"
-          });
-          return;
-        }
-        if (password !== password2) {
-          handleResponse({
-            reason: "Passwords do not match"
-          });
-          return;
-        }
-        if (email && !validateEmail(email)) {
-          handleResponse({
-            reason: "Invalid email"
-          });
-          return;
-        }
-        return Accounts.createUser([
-          {
-            username: username,
-            email: email,
-            password: password
-          }, function(err){
-            return handleResponse(err, "Account made");
-          }
-        ]);
-      case "sign":
-        return Meteor.loginWithPassword(username, password, function(err){
-          return handleResponse(err, "You've logged in");
-        });
-      }
-    } else if (type === "forgot") {
-      if (!forgotEmail) {
-        handleResponse({
-          reason: "Must enter an email address"
-        });
-        return;
-      }
-      if (forgotEmail && !validateEmail(forgotEmail)) {
-        handleResponse({
-          reason: "Invalid email"
-        });
-        return;
-      }
-      handleResponse({
-        reason: "A message has been sent"
-      });
-      console.log(forgotEmail);
-    }
-  },
-  "click .logout": function(event, tmpl){
-    return Meteor.logout(function(){
-      return Store.clear();
-    });
-  }
-});
-Template.ceiling.rendered = function(){
-  return $(this.findAll("[data-toggle='tooltip']")).tooltip();
-};
-Template.content.rendered = function(){
-  var this$ = this;
-  if (Meteor.Router.page() === "home") {
-    return;
-  }
-  if (!this.activateLinks) {
-    this.activateLinks = function(){
-      return Deps.autorun(function(){
-        var href, page, page_split, page_area, page_links, page_sublinks, show_sublinks, ref$, hrefs, format_hrefs;
-        href = function(link){
-          if (link) {
-            return '[href="/' + link.join('/') + '"]';
-          }
-        };
-        page = Meteor.Router.page();
-        page_split = page.split("_");
-        page_area = page_split.splice(0, 1);
-        page_links = page_split.splice(0, 2);
-        page_sublinks = page_split;
-        show_sublinks = (ref$ = Store.get("show_" + page)) != null ? ref$.split("_") : void 8;
-        hrefs = [href(page_links), href(page_sublinks), href(show_sublinks)];
-        format_hrefs = _.compact(hrefs).toString();
-        $(this$.findAll("ul.links a, ul.sublinks a")).removeClass("active").addClass("inactive").filter(format_hrefs).removeClass("inactive").addClass("active");
-        if (page_area !== "account") {
-          if (!$(this$.find("[data-validate]")).is(":focus")) {
-            if (!this$.page_sublinks === page_sublinks.toString()) {
-              this$.page_sublinks = page_sublinks.toString();
-              return $(this$.findAll("[data-validate]")).jqBootstrapValidation();
-            }
-          }
-        }
-      });
-    };
-  }
-  return this.activateLinks();
-};
 Template.content.events({
-  'click .links a': function(event, tmpl){
-    var href, area;
-    href = event.currentTarget.getAttribute("href");
-    area = href.slice(1).split("/");
-    return Store.set("page_" + area[0], area.join("_"));
-  },
-  'click .sublinks a': function(event, tmpl){
-    var tar, type, href, area;
-    tar = $(event.currentTarget);
-    type = tar.attr("data-type");
-    if (type === "show") {
-      event.preventDefault();
-    }
-    href = tar.attr("href");
-    area = href.slice(1).split("/");
-    return Store.set(type + "_" + area[0] + "_" + area[1], area.join("_"));
-  },
-  'click .sublinks.account_offer a': function(event, tmpl){
-    return Session.set("currentOffer", as());
-  },
-  "click .sublinks.account_profile a.save": function(event, tmpl){
-    var sub_area, form, newEmail, newUsername, adminCode;
-    sub_area = Store.get("page_account_profile");
-    if (!sub_area) {
-      Meteor.Alert.set({
-        text: "An error occurred..."
-      });
-      console.log("sub_area not defined...which area are we in?");
-      return;
-    }
-    form = $(tmpl.find("form"));
-    switch (sub_area) {
-    case "account_profile_edit":
-      newEmail = form.find('#email').val();
-      newUsername = form.find('#username').val();
-      if (newEmail) {
-        if (!validateEmail(newEmail)) {
-          Meteor.Alert.set({
-            text: "Invalid email"
-          });
-          return;
-        }
-      }
-      return Meteor.call("updateUser", newEmail, newUsername, function(err){
-        if (err) {
-          return Meteor.Alert.set({
-            text: err.reason
-          });
-        }
-      });
-    case "account_profile_colors":
-      return Meteor.Alert.set({
-        text: "Profile successfully saved"
-      });
-    case "account_profile_settings":
-      adminCode = form.find('#admin');
-      if (adminCode.is(":disabled") === false) {
-        return Meteor.call("activateAdmin", adminCode.val(), function(err){
-          if (err) {
-            return Meteor.Alert.set({
-              text: err.reason
-            });
-          }
-        });
-      } else {
-        return Meteor.Alert.set({
-          text: "Profile saved successfully"
-        });
-      }
-    }
-  },
-  "click .sublinks.account_offer a.save": function(event, tmpl){
-    var x$;
-    x$ = Offer.getStore();
-    x$.save();
-    return x$;
-  },
   'click .accord header': function(event, tmpl){
     if (!$(event.target).hasClass("active")) {
       $(event.currentTarget).siblings().slideDown();
@@ -394,22 +73,8 @@ Template.content.events({
       $(event.currentTarget).siblings().slideUp();
     }
     return $(event.target).toggleClass("active");
-  },
-  'mouseenter [data-gray]': function(e, t){
-    var tar, ref$;
-    tar = $(e.currentTarget);
-    if ((ref$ = t.find("[data-gray='true']")) != null) {
-      ref$.setAttribute("data-gray", false);
-    }
-    return tar.attr("data-gray", true);
-  },
-  'click [data-gray]': function(e, t){
-    return Store.set("gray", e.currentTarget.getAttribute("class"));
   }
 });
-colorFill = function(el, selector, value){
-  return el + " { " + selector + " : " + value + " }";
-};
 Conf = (function(){
   Conf.displayName = 'Conf';
   var prototype = Conf.prototype, constructor = Conf;
@@ -435,7 +100,7 @@ Conf = (function(){
   return Conf;
 }());
 Template.home.helpers({
-  getOffers: function(){
+  get_offers: function(){
     var current, myLoc, conf, ranges, notes, result, r, n;
     this.coll == null && (this.coll = new Meteor.Collection(null));
     switch (false) {

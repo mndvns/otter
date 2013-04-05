@@ -9,7 +9,40 @@ type = ->
     return class-to-type[my-class]
   return "object"
 
-My =
+
+
+
+@A = @App = Meteor.App = {}
+
+@log = -> console.log &
+
+# @EH = Event-horizon
+
+
+String ::=
+
+    to-proper-case : ->
+      @replace /\w\S*/g , (txt) ->
+        txt.char-at 0 .to-upper-case! + txt.substr 1 .to-lower-case!
+
+    repeat : -> new Array( it + 1 ).join ""
+
+array-repeat = (value, len) ->
+  len +=1
+  out = []
+  while len -=1
+    out.push(value)
+  out
+
+number-with-commas = (x)->
+  x?.to-string!replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+
+
+
+
+self = @
+
+@My =
 
   env       : ->
     | Meteor.isServer => return global
@@ -20,7 +53,7 @@ My =
     | Meteor.isClient => return Meteor.user!
 
   userId    : ->
-    | Meteor.isServer => return Meteor.userId!
+    | Meteor.isServer => return self.userId
     | Meteor.isClient => return Meteor.userId!
 
   userLoc   : -> Store?.get "user_loc"
@@ -45,8 +78,17 @@ My =
 
 
   init      : (klass, obj = {}) -> @[klass]! or @env![klass.to-proper-case!].new obj
-
   map       : (field, list) --> map (-> it[field]), @[list]?!
+
+
+
+
+@Is =
+
+  mine  : -> My.user-id! is it?.owner-id
+
+
+
 
 Meteor.methods {}=
   upvoteEvent: (offer) ->
@@ -65,4 +107,7 @@ Meteor.methods {}=
         karma: 1
 
   instance_destroy_mine: ->
-    My.env![it].remove ownerId: My.userId!
+    console.log 'GOT INSIDE'
+    user-id = My.user-id!
+    each (.destroy!), Offer.mine!fetch!
+    # Offers.remove ownerId: user-id

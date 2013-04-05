@@ -68,9 +68,8 @@ Template.account_offer.events {}=
     update_qrcode()
 
 Template.account_offer.created = ->
-  console.log "GOT HERERERE"
-  unless Store.get("show_account_offer")
-    Store.set("show_account_offer", "account_offer_info")
+  # unless Store.get("show_account_offer")
+  #   Store.set("show_account_offer", "account_offer_info")
   Offer.load-store!
   # My.offer!
 

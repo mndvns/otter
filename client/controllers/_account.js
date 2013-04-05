@@ -62,10 +62,6 @@ Template.account_offer.events({
   }
 });
 Template.account_offer.created = function(){
-  console.log("GOT HERERERE");
-  if (!Store.get("show_account_offer")) {
-    Store.set("show_account_offer", "account_offer_info");
-  }
   return Offer.loadStore();
 };
 Template.account_profile_colors.rendered = function(){

@@ -1,8 +1,8 @@
 var toString$ = {}.toString;
 (function(){
-  var MC, AC, ENV, CALL, ISSERVER, ISCLIENT, ISDEV, MIX, Model, METHODS, GENERATE, MM;
-  MC = Meteor.Collection;
+  var AC, MC, ENV, CALL, ISSERVER, ISCLIENT, ISDEV, MIX, Model, METHODS, GENERATE, MM;
   AC = App.Collection = {};
+  MC = Meteor.Collection;
   ENV = My.env();
   CALL = Meteor.call;
   switch (false) {
@@ -355,7 +355,7 @@ var toString$ = {}.toString;
       });
     };
     Model.destroyMine = function(){
-      return CALL("instance_destroy_mine", this._collection._name.toProperCase());
+      return CALL("instance_destroy_mine", this._type.model + "s");
     };
     Model.serialize = function(it){
       return this['new'](listToObj(map(function(it){
@@ -392,6 +392,7 @@ var toString$ = {}.toString;
     }
     Klass = ENV[K.klass] = object;
     Klass._collection = ENV[C.coll] = AC[C.coll] = new MC(Coll, {
+      idGeneration: 'STRING',
       transform: C.trans
     });
     Klass._type = {
@@ -534,6 +535,26 @@ var toString$ = {}.toString;
             }
           }) : void 8;
         },
+        geoDistance: function(lat1, lon1, lat2, lon2, unit){
+          var radlat1, radlat2, radlon1, radlon2, theta, radtheta, dist;
+          radlat1 = Math.PI * lat1 / 180;
+          radlat2 = Math.PI * lat2 / 180;
+          radlon1 = Math.PI * lon1 / 180;
+          radlon2 = Math.PI * lon2 / 180;
+          theta = lon1 - lon2;
+          radtheta = Math.PI * theta / 180;
+          dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+          dist = Math.acos(dist);
+          dist = dist * 180 / Math.PI;
+          dist = dist * 60 * 1.1515;
+          if (unit === "K") {
+            dist = dist * 1.609344;
+          }
+          if (unit === "N") {
+            dist = dist * 0.8684;
+          }
+          return dist;
+        },
         geoPlot: function(){
           var m, g;
           m = (typeof My.userLoc === 'function' ? My.userLoc() : void 8) || {
@@ -542,7 +563,7 @@ var toString$ = {}.toString;
           };
           g = this.geo;
           if (g != null) {
-            return Math.round(distance(m.lat, m.long, g[0], g[1], "MMMMMMMMMM" / 10));
+            return Math.round(this.geoDistance(m.lat, m.long, g[0], g[1], "MMMMMMMMMM" / 10));
           }
         }
       }
@@ -811,28 +832,29 @@ var toString$ = {}.toString;
       },
       method: {
         getStore: function(){
-          return this['new'](Store.get("instance_" + this._type.model.toLowerCase()));
+          var out, mine;
+          out = this['new'](Store.get("instance_" + this._type.model.toLowerCase()));
+          mine = My.offer();
+          if (mine) {
+            out._id = mine._id;
+            out.ownerId = mine.ownerId;
+          }
+          return out;
         },
         loadStore: function(){
           var this$ = this;
           return Deps.autorun(function(){
             var x$, y$;
-            if (Session.get("subscribe_ready") === true) {
-              console.log("LOAD STORE");
-              switch (false) {
-              case Offer.getStore() == null:
-                break;
-              case !this$.mine().count():
-                x$ = My.offer();
-                x$.storeLoad();
-                return x$;
-                break;
-              default:
-                y$ = this$['new']();
-                y$.defaultSet();
-                y$.storeLoad();
-                return y$;
-              }
+            if (Session.get("offer_subscribe_ready") !== true) {
+              return;
+            }
+            switch (false) {
+            case !Is.mine(this$.getStore()):
+              return log('LOAD!', 'IS MINE');
+            case !(this$.mine().count() > 0):
+              return log('LOAD!', 'LOADING MINE') && (x$ = My.offer(), x$.storeLoad(), x$);
+            default:
+              return log('LOAD!', 'DEFAULT SET') && (y$ = this$['new'](), y$.defaultSet(), y$.storeLoad(), y$);
             }
           });
         },

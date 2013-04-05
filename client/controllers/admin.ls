@@ -28,7 +28,7 @@ Template.editor.events {}=
     save_type  = event.currentTarget.getAttribute "data-save-type"
     collection = Store.get("nab").toProperCase()
     rawtext    = $(tmpl.find( "[data-text-type*=#{save_type}]" ))?.val()
-    text       = textarea? JSON.parse(textarea)
+    text       = JSON.parse(rawtext)
 
     switch save_type
     | "update"    => window[collection].update @_id, { $set   : text }

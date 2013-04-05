@@ -1,7 +1,6 @@
 do ->
-
-  MC = Meteor.Collection
-  AC = App.Collection = {}
+  AC  =  App.Collection = {}
+  MC  =  Meteor.Collection
 
   ENV = My.env!
   CALL = Meteor.call
@@ -165,7 +164,7 @@ do ->
     @where  = -> @_collection.find it
     @mine   = -> @where owner-id: My.user-id!
 
-    @destroy-mine = -> CALL "instance_destroy_mine", @_collection._name.to-proper-case!
+    @destroy-mine = -> CALL "instance_destroy_mine", @_type.model + "s"
 
     @serialize    = -> @new <| list-to-obj <| map (->[it.name, it.value]), $(it).serialize-array!
 
@@ -189,7 +188,7 @@ do ->
     | _           => Coll = C.coll.to-lower-case!
 
     Klass             = ENV[K.klass] = object
-    Klass._collection = ENV[C.coll]  = AC[C.coll] = new MC Coll, transform: C.trans
+    Klass._collection = ENV[C.coll]  = AC[C.coll] = new MC Coll, { id-generation: \STRING, transform: C.trans }
     Klass._type       = 
       model       : do -> K.klass.to-string!
       collection  : do -> _.pluralize K.klass.to-string!to-lower-case!
@@ -270,11 +269,27 @@ do ->
                 @ ..alert format ..save!
                 it? null, format
 
+        geo-distance : (lat1, lon1, lat2, lon2, unit) ->
+          radlat1 = Math.PI * lat1 / 180
+          radlat2 = Math.PI * lat2 / 180
+          radlon1 = Math.PI * lon1 / 180
+          radlon2 = Math.PI * lon2 / 180
+          theta = lon1 - lon2
+          radtheta = Math.PI * theta / 180
+          dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta)
+          dist = Math.acos(dist)
+          dist = dist * 180 / Math.PI
+          dist = dist * 60 * 1.1515
+          dist = dist * 1.609344  if unit is "K"
+          dist = dist * 0.8684  if unit is "N"
+          dist
+
+
         geo-plot: ->
           m = My.userLoc?! or {lat: 39, long: -94}
           g = @geo
 
-          if g? => Math.round distance m.lat, m.long, g[0], g[1], "M" * 10 / 10
+          if g? => Math.round @geo-distance m.lat, m.long, g[0], g[1], "M" * 10 / 10
 
     * * name  : \rargo
         side  : \shared
@@ -442,15 +457,26 @@ do ->
         set-nearest : -> if @locations? => @nearest = minimum  [..distance for @locations]
 
       method :
-        get-store  : -> @new Store.get "instance_#{@_type.model.to-lower-case!}"
+        get-store  : -> 
+          out = @new Store.get "instance_#{@_type.model.to-lower-case!}"
+
+          mine = My.offer!
+
+          if mine
+            out._id       = mine._id
+            out.owner-id  = mine.owner-id
+
+          out
+
         load-store : ->
           Deps.autorun ~>
-            if Session.get("subscribe_ready") is true
-              console.log "LOAD STORE"
-              switch
-              | Offer.get-store()? => return
-              | @mine!count!       => My.offer! ..store-load!
-              | _                  => @new! ..default-set! ..store-load!
+            unless Session.get("offer_subscribe_ready") is true => return
+
+            switch
+            | Is.mine @get-store! => (log 'LOAD!', 'IS MINE'     )
+            | @mine!count! > 0    => (log 'LOAD!', 'LOADING MINE') and ( My.offer! ..store-load!            )
+            | _                   => (log 'LOAD!', 'DEFAULT SET' ) and ( @new! ..default-set! ..store-load! )
+
 
         load-all   : (coll) -> each (-> coll.insert it), Offers.find!fetch!
 

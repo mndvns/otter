@@ -23,7 +23,7 @@ Template.editor.events({
     save_type = event.currentTarget.getAttribute("data-save-type");
     collection = Store.get("nab").toProperCase();
     rawtext = (ref$ = $(tmpl.find("[data-text-type*=" + save_type + "]"))) != null ? ref$.val() : void 8;
-    text = typeof textarea === 'function' ? textarea(JSON.parse(textarea)) : void 8;
+    text = JSON.parse(rawtext);
     switch (save_type) {
     case "update":
       return window[collection].update(this._id, {

@@ -1,15 +1,4 @@
 
-
-# #////////////////////////////////////////////
-# #  $$  globals and locals
-
-checkHelpMode = ->
-  $(".wrapper").hasClass("help-mode")
-
-# checkHelp = (a)->
-#   if a.getAttribute("data-help-block") is "true"
-#     return true
-
 Sparrow = {}
 Sparrow.shift = ->
   Session.get "shift_area"
@@ -30,15 +19,7 @@ statCurrent = ->
       tag           : Store.get("current_tags")
       sort          : Store.get("current_sorts")
       sort_selector : Store.get("current_sorts_selector")
-      noun          : Store.get("current_nouns")
 
-  out.verbose.tagset  = (if out.verbose.tagset?.length then out.verbose.tagset else ["find"])
-  out.verbose.noun    = (if out.verbose.noun?.length then out.verbose.noun else ["offer"])
-  out.verbose.article = (if out.verbose.sort?.length then ["the"] else ["some"])
-
-  if out.verbose.tagset.toString() is "shop"
-    article = out.verbose.article.toString()
-    out.verbose.article = ["for " + article]
   out
 
 statRange = ->
@@ -63,43 +44,8 @@ Template.wrapper.rendered = ->
 
 Template.wrapper.events {}=
 
-  "click a[data-toggle-mode='sign-in']": (event, tmpl) ->
-
-    speed = 300
-
-    selector = $(event.currentTarget)
-    rival  = $(".toggler-group.left")
-    target = $(tmpl.find ".terrace")
-    sign = $('#sign-in')
-
-    selector.toggleClass "active"
-
-    if selector.is(".active")
-      rival.animate {}=
-        opacity: 0
-      , "fast"
-
-      sign.show()
-      target.slipShow {}=
-        speed: speed
-        haste: 1
-
-    else
-      target.slipHide {}=
-        speed: speed
-        haste: 1
-      , ->
-        sign.hide()
-
-      rival.show()
-      rival.animate {}=
-        opacity: 1
-      , "fast"
-
-
   "click .shift": (event, tmpl) ->
 
-    if checkHelpMode() then return
     if event.currentTarget.hasAttribute("disabled") then return
 
     dir     = event.currentTarget.getAttribute("data-shift-direction")
@@ -125,287 +71,7 @@ Template.wrapper.events {}=
 
 
 
-
-#//////////////////////////////////////////////
-#// $$ ceiling
-
-slipElements = (opt) ->
-  # $select = opt.selectEl
-  # $target = opt.targetEl
-  # $mode   = opt.modeEl
-  # $rival  = opt.rivalEl
-
-  # $select.toggleClass("active")
-
-  # $speed = 300
-
-  if $select.hasClass("active")
-    $mode.show()
-    $rival.fadeOut('fast')
-    $target.slipShow {}=
-      speed: $speed
-      haste: 1
-
-    $target.slipHide {}=
-      speed: $speed
-      haste: 1
-      , ->
-        $mode.hide()
-        $rival.fadeIn('fast')
-
-
-Template.ceiling.events {}=
-
-  "click .navigation a": (event, tmpl) ->
-    target = event.currentTarget
-    active = target.getAttribute("class")
-
-    if active is "active" then return
-
-    selectEl = $(target)
-    selectEl.addClass("active")
-    selectEl.siblings().removeClass("active")
-
-    data = selectEl.data()["accountData"]
-
-    hide = for h in data.hide
-      tmpl.find("[data-account='#{h}']")
-    show = for s in data.show
-      tmpl.find("[data-account='#{s}']")
-
-    speed = 150
-
-    $(hide).slipHide {}=
-      speed: speed
-      haste: 1
-      , ->
-        $(show).slipShow {}=
-          speed: speed
-          haste: 1
-
-    type = data.type
-    text = target.textContent
-
-    button = tmpl.find("button[type='submit']")
-
-    button.setAttribute "data-account-submit-type", data.type
-    button.textContent = data.text
-
-
-  "click button[type='submit']": (event, tmpl) ->
-    event.preventDefault()
-
-    username    = tmpl.find('input#username').value
-    password    = tmpl.find('input#password').value
-    email       = tmpl.find('input#email').value
-    password2   = tmpl.find('input#password2').value
-    forgotEmail = tmpl.find('input#forgot-email').value
-
-    type = event.currentTarget.getAttribute("data-account-submit-type")
-
-    handleResponse = (err, res) ->
-      if err
-        $(tmpl.find(".alert")).text(err.reason).addClass "in"
-
-    if type is "sign" or type is "create"
-
-      errors = []
-
-      if not username then errors.push "username"
-      if not password then errors.push "password"
-
-      if errors.length
-        handleResponse reason: "Must enter a #{errors.join(" and ")}"
-        return
-
-      switch type
-        when "create"
-          errors = []
-
-          if username.length < 5 then errors.push "username"
-          if password.length < 5 then errors.push "password"
-
-          if errors.length
-            handleResponse reason: "#{errors.join(" and ")} must be at least five characters"
-            return
-
-          if password isnt password2
-            handleResponse reason: "Passwords do not match"
-            return
-
-          if email and not validateEmail(email)
-            handleResponse reason: "Invalid email"
-            return
-
-          Accounts.createUser {}=
-            username: username
-            email: email
-            password: password,
-            (err) ->
-              handleResponse err, "Account made"
-
-        when "sign"
-          Meteor.loginWithPassword username, password, (err) ->
-            handleResponse err, "You've logged in"
-
-    else if type is "forgot"
-
-      if not forgotEmail
-        handleResponse reason: "Must enter an email address"
-        return
-
-      if forgotEmail and not validateEmail forgotEmail
-        handleResponse reason: "Invalid email"
-        return
-
-      handleResponse reason: "A message has been sent"
-
-      console.log(forgotEmail)
-      return
-
-  "click .logout": (event, tmpl) ->
-    Meteor.logout(->
-      Store.clear()
-    )
-
-Template.ceiling.rendered = ->
-  $(@findAll("[data-toggle='tooltip']")).tooltip()
-
-#////////////////////////////////////////////
-#  $$ content
-
-Template.content.rendered = ->
-  return if Meteor.Router.page() is "home"
-
-  # unless @event-horizon
-  #   @event-horizon = Deps.autorun ~>
-  #     eh = Event-horizon
-
-  #     terr       = $ \.terrace
-  #     terr-alert = $ \#terrace-alert
-
-  #     eh.fire-when-true 'terrace_open', ->
-  #       Prompts.find-one()?
-
-  #     eh.on 'terrace_open', ->
-  #       console.log "IT FIRED"
-  #       terr-alert.show!
-  #       terr.show!
-
-
-
-
-  unless @activateLinks
-    @activateLinks = ~>
-      # context = new Deps.Context()
-      # context.onInvalidate @activateLinks
-      # context.run ~>
-      Deps.autorun ~>
-
-        href = (link) ->
-          if link
-            '[href="/' + link.join('/') + '"]'
-
-        page          = Meteor.Router.page()
-        page_split    = page.split("_")
-        page_area     = page_split.splice(0, 1)
-        page_links    = page_split.splice(0, 2)
-        page_sublinks = page_split
-        show_sublinks = Store.get("show_#{page}")?.split("_")
-
-        hrefs =
-          href(page_links),
-          href(page_sublinks),
-          href(show_sublinks)
-          ...
-
-        format_hrefs = _.compact( hrefs ).toString()
-        # console.log( "FORMAT HREFS", format_hrefs )
-
-        $(@find-all("ul.links a, ul.sublinks a"))
-          .removeClass( "active" )
-          .addClass( "inactive" )
-        .filter( format_hrefs )
-          .removeClass("inactive")
-          .addClass("active")
-
-        if page_area isnt "account"
-          if not $(@find("[data-validate]")).is(":focus")
-            if not @page_sublinks is page_sublinks.toString()
-              @page_sublinks = page_sublinks.toString()
-              # console.log("activated links and sublinks")
-
-              $(@findAll("[data-validate]")).jqBootstrapValidation()
-
-
-  @activateLinks()
-
-
 Template.content.events {}=
-
-  'click .links a': (event, tmpl) ->
-    href = event.currentTarget.getAttribute "href"
-    area = href.slice(1).split("/")
-    Store.set "page_#{area[0]}", area.join("_")
-
-  'click .sublinks a': (event, tmpl) ->
-    tar  = $(event.currentTarget)
-    type = tar.attr "data-type"
-
-    if type is "show"
-      event.preventDefault()
-
-    href = tar.attr "href"
-    area = href.slice(1).split("/")
-    Store.set "#{type}_#{area[0]}_#{area[1]}", area.join("_")
-
-  'click .sublinks.account_offer a': (event, tmpl) ->
-    Session.set "currentOffer", as()
-
-  "click .sublinks.account_profile a.save": (event, tmpl) ->
-    sub_area = Store.get "page_account_profile"
-
-    unless sub_area
-      Meteor.Alert.set {}=
-        text: "An error occurred..."
-      console.log("sub_area not defined...which area are we in?")
-      return
-
-    form = $(tmpl.find("form"))
-
-    switch sub_area
-      when "account_profile_edit"
-        newEmail    = form.find('#email').val()
-        newUsername = form.find('#username').val()
-
-        if newEmail
-          unless validateEmail(newEmail)
-            Meteor.Alert.set {}=
-              text: "Invalid email"
-            return
-
-        Meteor.call "updateUser", newEmail, newUsername, (err) ->
-          if err
-            Meteor.Alert.set text: err.reason
-
-      when "account_profile_colors"
-        Meteor.Alert.set text: "Profile successfully saved"
-
-      when "account_profile_settings"
-        adminCode = form.find('#admin')
-        if adminCode.is(":disabled") is false
-          Meteor.call "activateAdmin", adminCode.val(), (err) ->
-            if err
-              Meteor.Alert.set text: err.reason
-
-        else
-          Meteor.Alert.set text: "Profile saved successfully"
-
-
-
-
-  "click .sublinks.account_offer a.save": (event, tmpl) ->
-    Offer.get-store! ..save!
 
   'click .accord header': (event, tmpl) ->
     if not $(event.target).hasClass "active"
@@ -413,24 +79,6 @@ Template.content.events {}=
     else
       $(event.currentTarget).siblings().slideUp()
     $(event.target).toggleClass "active"
-
-
-  'mouseenter [data-gray]': (e, t)->
-    # console.log("mouseENTER")
-    tar = $(e.currentTarget)
-    t.find("[data-gray='true']")?.setAttribute("data-gray", false)
-    tar.attr("data-gray", true)
-
-  'click [data-gray]': (e, t)->
-    Store.set "gray", e.currentTarget.getAttribute("class")
-
-
-# 
-# Template.content.preserve 'section.main'
-
-
-colorFill = (el, selector, value) ->
-  "#{el} { #{selector} : #{value} }"
 
 
 
@@ -454,7 +102,7 @@ class Conf
         @query.tags = $in: current.tag
 
 Template.home.helpers {}=
-  getOffers: ->
+  get_offers: ->
 
     @coll ?= new Meteor.Collection null
 
@@ -510,27 +158,13 @@ Template.home.helpers {}=
       Store.set "notes", notes
 
       if conf.sort_empty
-        return result = _.sortBy(result, "shuffle")
+        return result = _.sort-by(result, "shuffle")
       else
         return result
 
       result
 
     result
-
-    # out = each ->
-    #   | not _.contains C.tagset, it.tagset => it.active = false
-    #   | C.tag.length > 0 =>
-    #     switch
-    #     | (_.intersection C.tag, it.tags).length > 0  => it.active = true
-    #     | _                                           => it.active = false
-    #   | _   => it.active = true
-    # ,
-    #   @offers
-
-    # _.sort-by out, -> it.price
-
-
 
 
 
