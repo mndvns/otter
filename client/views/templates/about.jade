@@ -1,12 +1,16 @@
 
 template(name="about")
+  {{> about_synopsis }}
+
+
+template(name="about_synopsis")
   .row.centered
-    .span8.offset2
+    .span
       h2.smashed.clr-text.prime.
         Connected is a real-time web application that finds physical things near you and presents
         them in an interchangeable format.
     .clearfix
-    .span10.offset1
+    .row
       h4.clr-text.prime What's the beef
       p.
         It works with simple words -- verbs, adjectives, and nouns -- and combines them in the same
@@ -34,7 +38,7 @@ template(name="about")
 
 template(name="about_faq")
   .row.centered
-    .span8.offset2
+    .span
       .accord
         header: h4: a(href="#") So... what is Connected?
         .body

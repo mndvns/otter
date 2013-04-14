@@ -4,7 +4,7 @@
 //  $$ mixins
 
 mixin shift-block(opt)
-  .shift-block(data-help-block="false", data-help-selector="shift", class= opt.area +" "+ opt.direction )
+  .shift-block( class= opt.area +" "+ opt.direction )
     a.shift(href= "#", data-shift-direction= opt.direction, data-shift-area= opt.area )
       i(class="glyph-arrow-" + opt.direction)
 
@@ -147,54 +147,74 @@ head
 
 
 body
-  {{> wrapper }}
-  {{> logs_bootstrap }}
+  {{> main }}
 
-template(name="wrapper")
-  .wrapper
-    {{> atlas }}
-    {{> content }}
+template(name="main")
+  .spotlight: .inner
+  main
+    nav.anchors: .inner
+      {{> anchors }}
+    nav.menus
+      {{> menus }}
+    nav.sidebar: .inner
+      {{> sidebar }}
+    .content
+      {{> content }}
 
-template(name='atlas')
-  h1 hi!
+// SIDEBAR
+template(name="sidebar")
+  {{#if currentUser}}
+  .right
+    button.btn.btn-inverse.wide.logout {{display_name}}
+  {{/if}}
+
+// ANCHORS
+template(name="anchors")
+  {{#each stable 'Anchors'}}
+  {{> anchor }}
+  {{/each}}
+
+template(name='anchor')
+  li( data-shift-area= '{{name}}' ).inactive
+    .bg
+    i(class='glyph-{{glyph}}')
+    .headline
+      h1 &nbsp;{{display}}
 
 
+// MENUS
+template(name="menus")
+  .current  {{#isolate}} {{{current_menu}}} {{/isolate}}
+  .next     {{#isolate}} {{{next_menu   }}} {{/isolate}}
+
+template(name='menu')
+  menu
+    {{#each rows}} <div class='row {{class}}' {{attr}} style='{{style}}'>
+    {{#each items}} <a class='item {{class}}' {{attr}} style='{{style}}' href='{{href}}'>
+
+    button.btn: span {{name}}
+
+    </a> {{/each}}
+    </div> {{/each}}
+
+
+// CONTENT
 template(name="content")
-  .content
-    .current
-      {{#constant}} {{/constant}}
+  .current
+    {{#constant}} {{/constant}}
+    .container-trim
+      {{#isolate}} {{{current_page}}} {{/isolate}}
 
-      {{#if session 'equals' 'shift_current' 'home'}}
-      mixin topnav("home") {{/if}}
-      {{#if session 'equals' 'shift_current' 'account'}}
-      mixin topnav("account") {{/if}}
-      {{#if session 'equals' 'shift_current' 'about'}}
-      mixin topnav("about") {{/if}}
-      {{#if session 'equals' 'shift_current' 'admin'}}
-      mixin topnav("admin") {{/if}}
+  .next
+    {{#constant}} {{/constant}}
+    .container-trim
+      {{#isolate}} {{{next_page}}} {{/isolate}}
 
-      .container
-        {{renderPage}}
 
-    .next
-      {{#constant}} {{/constant}}
-
-      {{#if session 'equals' 'shift_area' 'home'}}
-      mixin topnav("home") {{/if}}
-      {{#if session 'equals' 'shift_area' 'account'}}
-      mixin topnav("account") {{/if}}
-      {{#if session 'equals' 'shift_area' 'about'}}
-      mixin topnav("about") {{/if}}
-      {{#if session 'equals' 'shift_area' 'admin'}}
-      mixin topnav("admin") {{/if}}
-
-      .container
-        {{{next_page}}}
 
 
 template(name='home')
   {{#if store "get" "user_loc"}}
-  {{> hero }}
   .offers
     {{#each get_offers}}
     {{> offer }}

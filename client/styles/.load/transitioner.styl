@@ -1,0 +1,61 @@
+
+// html
+//   scale(0.8)
+
+body
+  cursor default
+  line-height 1.5
+  position relative
+  overflow-x hidden
+  overflow-y scroll
+  background-color rgba(1,0,0,0)
+  &.transitioning
+    background-color rgba(0,0,0,0)
+    transition background-color $page_speed
+
+nav.menus
+div.content
+  left 0
+  width 200%
+  position absolute
+  .transitioning.from_admin.to_account &
+  .transitioning.from_account &
+  .transitioning.to_about &
+    transition left $page_speed
+    left 100%
+  .transitioning.to_admin &
+  .transitioning.to_account &
+  .transitioning.from_about &
+    transition left $page_speed
+    left -100%
+
+
+div.current
+div.next
+  width 50%
+  height 100%
+  position absolute
+  background transparent
+
+div.next
+  display none
+  .transitioning.from_admin.to_account &
+  .transitioning.from_account &
+  .transitioning.to_about &
+    left -50%
+    display block
+  .transitioning.to_admin &
+  .transitioning.to_account &
+  .transitioning.from_about &
+    left 50%
+    display block
+
+div.next
+  .transitioning &
+    .container-trim
+      animation fadeInHalfway $page_speed
+
+// div.current
+//   .transitioning &
+//     .container-trim
+//       animation fadeOut $page_speed

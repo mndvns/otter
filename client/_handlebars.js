@@ -9,6 +9,13 @@ var slice$ = [].slice;
       return moment().fromNow();
     }
   });
+  hh('find', function(it){
+    return window[it].find();
+  });
+  hh('global', function(){
+    var ref$, key$;
+    return typeof (ref$ = window[arguments[0]])[key$ = arguments[1]] === 'function' ? ref$[key$]() : void 8;
+  });
   hh("my", function(it){
     return typeof My != 'undefined' && My !== null ? typeof My[it] === 'function' ? My[it]() : void 8 : void 8;
   });
@@ -118,47 +125,41 @@ var slice$ = [].slice;
     result = "<" + el + ">" + content + "</" + el + ">";
     return new Handlebars.SafeString(result);
   });
-  hh("page_next", function(area){
-    var shift_sub_area, parse_sub_area;
-    shift_sub_area = Session.get("shift_sub_area");
-    if (area !== shift_sub_area) {
-      return false;
-    }
-    parse_sub_area = shift_sub_area.split("_").join("/");
-    Meteor.Transitioner.setOptions({
-      after: function(){
-        Meteor.Router.to(shift_sub_area === "home"
-          ? "/"
-          : "/" + parse_sub_area);
-        return Session.set("shift_sub_area", null);
-      }
+  hh("tmpl", function(name){
+    return Template[name]();
+  });
+  hh("page", function(name){
+    var page;
+    page = Pages.findOne({
+      name: name
     });
-    return shift_sub_area;
+    return Template[page]();
   });
-  hh("sublink", function(page, link){
-    var store_page;
-    store_page = Store.get("page_" + page);
-    if (store_page === page + "_" + link) {
-      return page + "/" + link;
-      return console.log(page + "/" + link);
+  hh("form", function(name){
+    return Template.form(Forms.findOne({
+      name: name
+    }, {
+      reactive: true
+    }));
+  });
+  hh("display_name", function(){
+    var u;
+    u = My.user();
+    switch (false) {
+    case !u.username:
+      return u.username.split(' ')[0];
+    case !u.profile.name:
+      return u.profile.name.split(' ')[0];
     }
   });
-  hh("next_page", function(){
-    var shift_sub_area, parse_sub_area;
-    shift_sub_area = Session.get("shift_sub_area");
-    if (!shift_sub_area) {
+  hh('stable', function(it){
+    var ref$;
+    if (Session.get('loaded_stables' !== true)) {
       return;
     }
-    parse_sub_area = shift_sub_area.split("_").join("/");
-    Meteor.Transitioner.setOptions({
-      after: function(){
-        Meteor.Router.to(shift_sub_area === "home"
-          ? "/"
-          : "/" + parse_sub_area);
-        return Session.set("shift_sub_area", null);
-      }
-    });
-    return Template[shift_sub_area]();
+    return (ref$ = window[it]) != null ? ref$.find({}, {
+      reactive: false
+    }) : void 8;
   });
   hh("show_block", function(template_name){
     var sub_area, page, show;

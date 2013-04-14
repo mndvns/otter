@@ -1,0 +1,70 @@
+
+
+mixin marker(text)
+  span.marker= text
+
+// {{#each global 'Tagsets' 'find'}}
+// .span4: button.btn {{name}}
+// {{/each}}
+
+
+
+
+
+
+
+
+// home  = {0: 'home', 1: ['eat', 'drink', 'shop'], 3: ['best', 'nearest', 'cheapest', 'recent']}
+// about = {0: 'about', 1: ['summary', 'faq', 'blog'] }
+// 
+// mixin item( name, length)
+//   div(attributes, class= 'span' + (12 / length))
+//     button.btn: span= name
+// 
+// mixin get(list)
+//   menu
+//     - for l in list
+//       +item( l, list.length )
+// 
+// mixin load(order, name)
+//   +get( name[order] )
+// 
+// 
+// template(name="reader_item")
+//   div(class="span{{span}}")
+//     button.btn(class="{{name}}"): span {{name}}
+// 
+// 
+// template(name='reader_about')
+//   li.1
+//     +load(1, about)
+//   li.2
+//     asd
+// 
+// template(name='reader_home')
+//   {{#isolate}}
+//   li.1: menu.tagset-list
+//     {{#each stable 'Tagsets'}}
+//     {{> reader_item }}
+//     {{/each}}
+//   {{/isolate}}
+// 
+//   {{#isolate}}
+//   li.2: menu.tag-list
+//     {{#each session 'get' 'tickets'}}
+//     div.span: button.btn: span {{name}}
+//     {{/each}}
+//   {{/isolate}}
+// 
+//   {{#isolate}}
+//   li.3: menu.sort-list
+//     {{#each stable 'Sorts'}}
+//     {{> reader_item }}
+//     {{/each}}
+//   {{/isolate}}
+// 
+// template(name='reader_account')
+//   li.1
+//     +load(3, home)
+// 
+// 

@@ -9,14 +9,7 @@ type = ->
     return class-to-type[my-class]
   return "object"
 
-
-
-
 @A = @App = Meteor.App = {}
-
-@log = -> console.log &
-
-# @EH = Event-horizon
 
 
 String ::=

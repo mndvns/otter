@@ -40,7 +40,7 @@ do ->
     listen : ->
       self = this
       Deps.autorun ->
-        self.transition Sparrow.shift()
+        self.transition Session.get('shift_next_area')
 
 
     # self.transition(Meteor.Router.page()); 
@@ -57,7 +57,7 @@ do ->
       self = this
 
       # this is our first page? don't do a transition
-      return self._setCurrentPage(Session.get("shift_current"))  unless self._currentPage
+      return self._setCurrentPage(Session.get("shift_current_area"))  unless self._currentPage
 
       # return self._setCurrentPage(newPage); 
 

@@ -38,14 +38,14 @@
       var self;
       self = this;
       return Deps.autorun(function(){
-        return self.transition(Sparrow.shift());
+        return self.transition(Session.get('shift_next_area'));
       });
     };
     prototype.transition = function(newPage){
       var self;
       self = this;
       if (!self._currentPage) {
-        return self._setCurrentPage(Session.get("shift_current"));
+        return self._setCurrentPage(Session.get("shift_current_area"));
       }
       if (self._nextPage) {
         self.endTransition();

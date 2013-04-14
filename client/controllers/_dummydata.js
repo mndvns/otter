@@ -1,5 +1,4 @@
-var dummydata;
-dummydata = [
+this.dummydata = [
   {
     name: 'one',
     rate: 2

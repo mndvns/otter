@@ -122,43 +122,10 @@ Template.offer.events({
   }
 });
 Template.offer.rendered = function(){
-  var range, keys, i$, len$, k, d, s, r, out;
-  Session.whenTrue(['derp', 'herp'], function(){
-    return console.log("DERP AND HERP");
-  });
-  $(this.findAll('.actions a')).tooltip();
-  if (Session.get("shift_area") === "account" || Meteor.Router.page() === "account_offer") {
-    return;
-  }
-  range = statRange();
-  keys = [
-    {
-      name: "points",
-      invert: false
-    }, {
-      name: "nearest",
-      invert: true
-    }, {
-      name: "price",
-      invert: true
-    }, {
-      name: "updatedAt",
-      invert: false
-    }
-  ];
-  for (i$ = 0, len$ = keys.length; i$ < len$; ++i$) {
-    k = keys[i$];
-    d = k.name;
-    s = d3.scale.linear().domain([range.min[d], range.max[d]]);
-    r = s(parseInt(this.data[d])) * 100;
-    out = k.invert === false
-      ? r + '%'
-      : Math.abs(r - 100) + '%';
-    $(this.find("section.data ." + d + " .metric")).css('width', out);
-  }
-  if (typeof watchOffer != 'undefined' && watchOffer !== null) {
-    return watchOffer.stop();
-  }
+  var ref$, this$ = this;
+  return (ref$ = this.handle) != null
+    ? ref$
+    : this.handle = Deps.autorun(function(){});
 };
 Template.offer_market.events({
   'click .payment-form button': function(e, t){

@@ -1,8 +1,10 @@
 
+App.Templates = {}
+
 do ->
   ms = Meteor.subscribe
 
-  ms "all_locations", -> console.log "LOCATIONS READY"
+  ms "all_locations", -> console.log ""
 
   # ms "relations", My?.userLoc! , ->
   #   console.log "SUBSCRIBE READY"
@@ -15,26 +17,28 @@ do ->
   ms "my_alerts"
   ms "my_prompts"
 
-  ms "tagsets"
-  ms "sorts"
   ms "points"
 
   ms "all_offers", -> Session.set 'offer_subscribe_ready', true
-  ms "all_tags"
+  ms "all_tags", -> Session.set 'tags_subscribe_ready', true
   ms "all_markets"
 
-  ms "purchases"
-  ms "customers"
+  # ms "purchases"
+  # ms "customers"
 
-  ms "user_data"
+  # ms "user_data"
 
-# window.__dirname = "http://localhost:3000/"
+do ->
+  mt = Mousetrap
 
+  out =
+    * 'left', 'about'
+    * <[ up down ]>, "home"
+    * 'right', 'account'
+    ...
 
-
-
-
-
+  _.each out, (o)->
+    mt.bind o[0], -> $ "nav.anchors li[data-shift-area=#{o[1]}]" .trigger 'click'
 
 
 
@@ -42,8 +46,6 @@ do ->
 
 Stripe.set-publishable-key("pk_test_xB8tcSbkx4mwjHjxZtSMuZDf") 
 Stripe.client_id = "ca_131FztgqheXRmq6vudxED4qdTPtZTjNt"
-
-# Color = net.brehaut.Color
 
 @Store = Meteor.Browser-store
 
@@ -73,7 +75,8 @@ Store.clear-all = ->
     console.log(key)
     Store.set(key, null)
 
-getLocation = ->
+
+@get-location = ->
   Meteor.Alert.set {}=
     text: "One moment while we charge the lasers..."
     wait: true

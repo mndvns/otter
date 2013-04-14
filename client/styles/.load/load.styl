@@ -1,0 +1,165 @@
+
+@import 'abbreviations'
+@import 'mixins'
+@import 'animate'
+@import 'transitioner'
+@import 'offer'
+@import 'intro'
+@import 'admin'
+@import 'lists'
+@import 'anchors'
+
+
+button
+  @extends .btn
+
+#configure-login-service-dialog
+  absolute top
+  z 3000
+  background white
+  text-align center
+
+.centered
+  display block
+  float none!important
+  margin 0 auto!important
+
+
+li
+  list-style none
+
+
+.wf-loading
+  visibility hidden
+
+.wf-active
+  visibility visible
+
+.capitalize
+  text-transform capitalize
+
+.centered
+  text-align center
+
+.accord
+  h4
+  p
+    margin-top 0
+    margin-bottom 0
+    padding 10px 0
+  a.active:hover
+    opacity 0.6
+  .body
+    display none
+
+hr
+
+  border-top 1px solid #eee
+  border-bottom 1px solid #fff
+
+  &.shadow
+    border-top #ddd
+    degree = .1
+    height = 20px
+    thinHeight = 10px
+    &.top
+      &.thin
+        radial-gradient black degree thinHeight bottom
+      radial-gradient black degree height bottom
+    &.bottom
+      &.thin
+        radial-gradient black degree thinHeight top
+      radial-gradient black .15 height top
+
+  &.soften
+    height 1px
+    margin 70px 0
+    background-image linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,.1), rgba(0,0,0,0))
+
+html
+  overflow-x hidden
+  background $bodyBackground
+  // scale(0.7)
+
+
+html
+body
+main
+div.content
+div.container
+div.current
+div.next
+  height 100%!important
+
+
+body
+input
+textarea
+button
+  font-family "proxima-nova", Helvetica
+  color #111
+
+.data
+  padding-bottom 15px
+  text-align center
+
+input.color
+  color white
+  text-align center
+
+.icon
+  opacity 0.7
+  display inline
+  text-align center
+  &:hover
+    opacity 1
+    span
+      opacity 1
+  i
+    font-size 2em
+    padding 20px
+  span
+    display inline
+    opacity .5
+
+
+.message-container
+  color = rgba(white, .3)
+  background color
+  margin-bottom 20px
+  footer
+  article > *
+    padding 20px
+  article
+    border-bottom 1px solid rgba(black, .15 )
+    relative top
+    overflow hidden
+    *
+      box-sizing border-box
+    .from
+      font-weight bold
+    .inner
+    textarea
+      border none
+      border-left 2px solid rgba(black, 0.3)
+      padding-left 10px
+      box-sizing border-box
+    .sent
+      absolute right
+      height 100%
+      text-align center
+    &.compose
+      light = rgba(white, .8)
+      color light
+      textarea
+        width 100%
+        box-shadow none
+        border-color rgba(black, .5)
+        color light
+      .sent
+        background rgba(white, 0.01)
+        font-weight bold
+        &:hover
+          background rgba(white, 0.1)
+
+

@@ -1,4 +1,4 @@
-dummydata =
+@dummydata =
 
   * name : \one
     rate : 2

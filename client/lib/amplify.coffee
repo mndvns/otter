@@ -1,3 +1,6 @@
+
+@as = amplify.store
+
 amplify.get = (a) ->
   p = a.split(".")
   s = amplify.store()

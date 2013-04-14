@@ -1,9 +1,5 @@
-var Sparrow, statCurrent, statRange, Conf;
-Sparrow = {};
-Sparrow.shift = function(){
-  return Session.get("shift_area");
-};
-statCurrent = function(){
+var validateArea, areas, getArea;
+this.statCurrent = function(){
   var out;
   out = {
     query: {
@@ -25,7 +21,7 @@ statCurrent = function(){
   };
   return out;
 };
-statRange = function(){
+this.statRange = function(){
   var out;
   out = {
     max: {
@@ -43,28 +39,9 @@ statRange = function(){
   };
   return out;
 };
-Template.wrapper.rendered = function(){
-  return Session.setDefault("rendered_wrapper", true);
+Template.main.rendered = function(){
+  return Session.setDefault("rendered_main", true);
 };
-Template.wrapper.events({
-  "click .shift": function(event, tmpl){
-    var dir, area, page, current, store_area, store_sub_area, sub_area;
-    if (event.currentTarget.hasAttribute("disabled")) {
-      return;
-    }
-    dir = event.currentTarget.getAttribute("data-shift-direction");
-    area = event.currentTarget.getAttribute("data-shift-area");
-    page = Meteor.Router.page();
-    current = page.split("_")[0];
-    store_area = Store.get("page_" + area) || area;
-    store_sub_area = Store.get("page_" + store_area);
-    sub_area = store_sub_area || store_area;
-    Session.set("shift_direction", dir);
-    Session.set("shift_area", area);
-    Session.set("shift_sub_area", sub_area);
-    return Session.set("shift_current", current);
-  }
-});
 Template.content.events({
   'click .accord header': function(event, tmpl){
     if (!$(event.target).hasClass("active")) {
@@ -75,91 +52,122 @@ Template.content.events({
     return $(event.target).toggleClass("active");
   }
 });
-Conf = (function(){
-  Conf.displayName = 'Conf';
-  var prototype = Conf.prototype, constructor = Conf;
-  function Conf(current){
-    var ref$;
-    this.sort = {};
-    if ((ref$ = current.sort.verbose) != null && ref$.length) {
-      this.sort[current.sort.specifier] = {};
-      this.sort[current.sort.specifier][current.sort.selector] = current.sort.order;
-    } else {
-      this.sort_empty = true;
+validateArea = {
+  account: [{
+    exclude: ['account_join', 'account_signup', 'account_login'],
+    test: function(){
+      return My.user() == null;
+    },
+    onfail: function(){
+      return 'account_join';
     }
-    this.query = {};
-    if ((ref$ = current.tagset) != null && ref$.length) {
-      this.query.tagset = current.tagset.toString();
-      if ((ref$ = current.tag) != null && ref$.length) {
-        this.query.tags = {
-          $in: current.tag
-        };
+  }]
+};
+areas = {
+  account: {
+    nav: function(){
+      return Tags.find().fetch();
+    }
+  }
+};
+getArea = function(session_area, cb){
+  var area, val, i$, len$, v;
+  area = Session.get(session_area);
+  if (!area) {
+    return;
+  }
+  if (val = validateArea[area.split('_')[0]]) {
+    for (i$ = 0, len$ = val.length; i$ < len$; ++i$) {
+      v = val[i$];
+      if (!in$(area, v.exclude)) {
+        if (v.test()) {
+          area = v.onfail();
+          break;
+        }
       }
     }
   }
-  return Conf;
-}());
+  return cb(area);
+};
+Template.content.helpers({
+  current_page: function(){
+    return getArea("shift_current_area", function(area){
+      return Template[area]();
+    });
+  },
+  next_page: function(){
+    return getArea("shift_sub_area", function(area){
+      var parse_area, parse_sub_area;
+      parse_area = area.split('_');
+      parse_sub_area = parse_area.join('/');
+      Meteor.Transitioner.setOptions({
+        after: function(){
+          Meteor.Router.to(parse_sub_area === "home"
+            ? "/"
+            : "/" + parse_sub_area);
+          Session.set("shift_current_menu", area);
+          Session.set("shift_current_area", area);
+          Session.set("shift_sub_area", null);
+          return Session.set("shift_next_menu", null);
+        }
+      });
+      Session.set("shift_next_menu", area);
+      return Template[area]();
+    });
+  }
+});
+Template.menus.helpers({
+  current_menu: function(){
+    var menu;
+    if (menu = Menus.findOne({
+      pages: Session.get("shift_current_menu")
+    })) {
+      return Template.menu(menu);
+    }
+  },
+  next_menu: function(){
+    var menu;
+    if (menu = Menus.findOne({
+      pages: Session.get("shift_next_menu")
+    })) {
+      Session.set("RANGO", Random.id());
+      return Template.menu(menu);
+    }
+  }
+});
+Template.sidebar.events({
+  'click .logout': function(){
+    return Meteor.logout();
+  }
+});
 Template.home.helpers({
   get_offers: function(){
-    var current, myLoc, conf, ranges, notes, result, r, n;
+    var ref$, ranges, result, r;
     this.coll == null && (this.coll = new Meteor.Collection(null));
-    switch (false) {
-    case !!this.offers:
+    if (!((ref$ = this.offers) != null && ref$.length)) {
       this.offers = Offer.loadAll(this.coll);
-      break;
-    case !(this.offers.length <= 0):
-      this.offers = Offer.loadAll(this.coll);
-      break;
-    default:
-      console.log("CACHE USED");
     }
     if (!this.offers) {
       return;
     }
-    current = statCurrent().query;
-    myLoc = Store.get("user_loc");
-    conf = new Conf(current);
     ranges = {
       updatedAt: [],
       nearest: [],
       points: [],
       price: []
     };
-    notes = {
-      count: 0,
-      votes: 0
-    };
-    result = this.coll.find(conf.query, conf.sort, {
+    result = this.coll.find(Store.get("current_tagsets"), Store.get("current_sorts"), {
       reactive: true
     }).map(function(d){
       var r;
-      d.rand = _.random(0, 999);
       for (r in ranges) {
         ranges[r].push(d[r]);
       }
-      notes.count += 1;
-      notes.votes += d.points;
-      if (conf.sort_empty && d.rand) {
-        d.shuffle = current.sort.order * d.rand;
-        d.shuffle = parseInt(d.shuffle.toString().slice(1, 4));
-      }
       return d;
     });
-    if (result && myLoc) {
-      for (r in ranges) {
-        amplify.store("max_" + r, _.max(ranges[r]));
-        amplify.store("min_" + r, _.min(ranges[r]));
-      }
-      for (n in notes) {
-        notes[n] = numberWithCommas(notes[n]);
-      }
-      Store.set("notes", notes);
-      if (conf.sort_empty) {
-        return result = _.sortBy(result, "shuffle");
-      } else {
-        return result;
-      }
-      result;
+    for (r in ranges) {
+      amplify.store("max_" + r, _.max(ranges[r]));
+      amplify.store("min_" + r, _.min(ranges[r]));
     }
     return result;
   },
@@ -242,3 +250,8 @@ Template.intro.rendered = function(){
     'margin-top': window_height - intro_height
   });
 };
+function in$(x, arr){
+  var i = -1, l = arr.length >>> 0;
+  while (++i < l) if (x === arr[i] && i in arr) return true;
+  return false;
+}

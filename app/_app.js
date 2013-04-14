@@ -16,9 +16,6 @@ type = function(it){
   return "object";
 };
 this.A = this.App = Meteor.App = {};
-this.log = function(){
-  return console.log(arguments);
-};
 ref$ = String.prototype;
 ref$.toProperCase = function(){
   return this.replace(/\w\S*/g, function(txt){

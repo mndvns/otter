@@ -115,42 +115,37 @@ Template.offer.events {}=
 
 
 Template.offer.rendered = ->
-  Session.when-true <[ derp herp ]>, -> console.log "DERP AND HERP"
+  @handle ?= Deps.autorun ~>
+    # $(@find-all '.actions a').tooltip!
 
-  $(@find-all '.actions a').tooltip!
+    # if Session.get("shift_next_area") is "account" or Meteor.Router.page! is "account_offer"
+    #   return
 
-  if Session.get("shift_area") is "account" or Meteor.Router.page! is "account_offer"
-    return
+    # range = stat-range!
+    # keys = [
+    #   name: "points"
+    #   invert: false
+    # ,
+    #   name: "nearest"
+    #   invert: true
+    # ,
+    #   name: "price"
+    #   invert: true
+    # ,
+    #   name: "updatedAt"
+    #   invert: false
+    # ]
 
-  range = stat-range!
-  keys = [
-    name: "points"
-    invert: false
-  ,
-    name: "nearest"
-    invert: true
-  ,
-    name: "price"
-    invert: true
-  ,
-    name: "updatedAt"
-    invert: false
-  ]
+    # for k in keys
+    #   d = k.name
+    #   s = d3.scale.linear!domain([range.min[d], range.max[d]])
+    #   r = s(parse-int @data[d]) * 100
 
-  for k in keys
-    d = k.name
-    s = d3.scale.linear!domain([range.min[d], range.max[d]])
-    r = s(parse-int @data[d]) * 100
+    #   out = if k.invert is false
+    #         then r + '%'
+    #         else Math.abs(r - 100) + '%'
 
-    out = if k.invert is false
-          then r + '%'
-          else Math.abs(r - 100) + '%'
-
-    $( @find "section.data .#{d} .metric" ).css 'width', out
-
-  if watch-offer?
-    watch-offer.stop!
-
+    #   $( @find "section.data .#{d} .metric" ).css 'width', out
 
 
 Template.offer_market.events {}=

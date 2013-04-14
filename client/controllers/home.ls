@@ -1,9 +1,5 @@
 
-Sparrow = {}
-Sparrow.shift = ->
-  Session.get "shift_area"
-
-statCurrent = ->
+@stat-current = ->
   out =
     query:
       tagset : Store.get("current_tagsets")
@@ -22,7 +18,7 @@ statCurrent = ->
 
   out
 
-statRange = ->
+@stat-range = ->
   out =
     max:
       updatedAt   : amplify.store("max_updatedAt")
@@ -39,37 +35,8 @@ statRange = ->
   out
 
 
-Template.wrapper.rendered = ->
-  Session.setDefault "rendered_wrapper", true
-
-Template.wrapper.events {}=
-
-  "click .shift": (event, tmpl) ->
-
-    if event.currentTarget.hasAttribute("disabled") then return
-
-    dir     = event.currentTarget.getAttribute("data-shift-direction")
-    area    = event.currentTarget.getAttribute("data-shift-area")
-    page    = Meteor.Router.page()
-    current = page.split("_")[0]
-
-    store_area     = Store.get("page_" + area) or area
-    store_sub_area = Store.get("page_" + store_area )
-
-    sub_area       = store_sub_area or store_area
-
-    # # console.log("DIR", dir)
-    # console.log("AREA", area)
-    # console.log("SUB AREA", sub_area)
-    # # console.log("PAGE", page)
-    # console.log("CURRENT", current)
-
-    Session.set "shift_direction", dir
-    Session.set "shift_area", area
-    Session.set "shift_sub_area", sub_area
-    Session.set "shift_current", current
-
-
+Template.main.rendered = ->
+  Session.setDefault "rendered_main", true
 
 Template.content.events {}=
 
@@ -81,41 +48,102 @@ Template.content.events {}=
     $(event.target).toggleClass "active"
 
 
+validate-area = 
+  account :
+    * exclude :
+        * \account_join
+        * \account_signup
+        * \account_login
+      test    : -> not My.user()?
+      onfail  : -> 'account_join'
+    ...
 
-#////////////////////////////////////////////
-#  $$ home
+areas = 
+  account :
+    nav   : -> Tags.find!fetch!
 
-class Conf
-  (current)->
 
-    @sort = {}
-    if current.sort.verbose?.length
-      @sort[current.sort.specifier] = {}
-      @sort[current.sort.specifier][current.sort.selector] = current.sort.order
-    else
-      @sort_empty = true
 
-    @query = {}
-    if current.tagset?.length
-      @query.tagset = current.tagset.toString()
-      if current.tag?.length
-        @query.tags = $in: current.tag
+
+get-area = (session_area, cb) ->
+    area = Session.get session_area
+    unless area then return
+
+    if val = validate-area[ area.split('_')[0] ]
+      for v in val
+        unless area in v.exclude
+          if v.test!
+            area = v.onfail!
+            break
+
+    cb area
+
+
+Template.content.helpers {}=
+
+  current_page  : -> get-area "shift_current_area", (area) ->
+
+    Template[ area ]()
+
+  next_page     : -> get-area "shift_sub_area", (area) ->
+
+    parse_area      = area.split '_'
+    parse_sub_area  = parse_area.join '/'
+
+    Meteor.Transitioner.set-options after: ->
+      Meteor.Router.to (if parse_sub_area is "home" then "/" else "/" + parse_sub_area)
+
+      Session.set "shift_current_menu", area
+      Session.set "shift_current_area", area
+
+      Session.set "shift_sub_area", null
+      Session.set "shift_next_menu", null
+
+    Session.set "shift_next_menu", area
+
+    Template[ area ]()
+
+
+# Template.content.rendered = ->
+# 
+#   @grab-height = Deps.autorun ->
+# 
+#     Session.get("RANGO")
+# 
+#     q = $ '.content .current .container-trim' .height!
+#     z = $ '.content .next .container-trim' .height!
+# 
+#     # console.log "Cnt CURRENT", q
+#     console.log "Cnt NEXT", z
+# 
+
+Template.menus.helpers {}=
+
+  current_menu: ->
+    if menu = Menus.find-one pages: Session.get "shift_current_menu"
+      Template.menu menu
+
+  next_menu   : ->
+    if menu = Menus.find-one pages: Session.get "shift_next_menu"
+      Session.set "RANGO", Random.id!
+      Template.menu menu
+
+
+
+
+
+Template.sidebar.events {}=
+  'click .logout': ->
+    Meteor.logout!
+
 
 Template.home.helpers {}=
   get_offers: ->
 
     @coll ?= new Meteor.Collection null
 
-    switch 
-    | not @offers          => @offers = Offer.load-all @coll
-    | @offers.length <= 0  => @offers = Offer.load-all @coll
-    | _                    => console.log "CACHE USED"
-
+    if not @offers?.length => @offers = Offer.load-all @coll
     unless @offers => return
-
-    current = stat-current!query
-    my-loc  = Store.get "user_loc"
-    conf    = new Conf(current)
 
     ranges =
       updatedAt   : []
@@ -123,46 +151,20 @@ Template.home.helpers {}=
       points      : []
       price       : []
 
-    notes =
-      count: 0
-      votes: 0
-
     result = @coll.find(
-      conf.query,
-      conf.sort,
+      Store.get("current_tagsets"),
+      Store.get("current_sorts")
       reactive: true
     ).map (d)->
-        d.rand = _.random 0, 999
 
         for r of ranges
           ranges[r].push d[r]
 
-        notes.count +=1
-        notes.votes += d.points
-
-        if conf.sort_empty and d.rand
-          d.shuffle = current.sort.order * d.rand
-          d.shuffle = parseInt( d.shuffle.to-string!.slice(1,4) )
-
         d
 
-    if result and myLoc
-
-      for r of ranges
-        amplify.store "max_#{r}", _.max(ranges[r])
-        amplify.store "min_#{r}", _.min(ranges[r])
-
-      for n of notes
-        notes[n] = numberWithCommas(notes[n])
-
-      Store.set "notes", notes
-
-      if conf.sort_empty
-        return result = _.sort-by(result, "shuffle")
-      else
-        return result
-
-      result
+    for r of ranges
+      amplify.store "max_#{r}", _.max(ranges[r])
+      amplify.store "min_#{r}", _.min(ranges[r])
 
     result
 
@@ -232,3 +234,4 @@ Template.intro.rendered = ->
   intro_height = (intro.outerHeight() * 0.75)
   intro.css {}=
     'margin-top': window_height - intro_height
+

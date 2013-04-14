@@ -1,0 +1,228 @@
+
+.offers
+  margin-top 300px
+  height 100%
+  display block
+
+.offer
+
+  relative top
+
+  border solid white
+  box-sizing border-box
+  font-weight normal
+  width 100%
+  float left
+  box-shadow 0px 2px 6px -1px rgba(black, .5)
+  overflow hidden
+
+  // height
+  H         = 250px
+  H-data    = 50px
+  H-main    = H - H-data
+  H-blurb   = H-main * .4
+  H-actions = H-blurb * .4
+
+  spacing       = 7px
+  spacing-main  = ((H-main - (H-blurb + H-actions + spacing)) / 2)
+
+  C       = #aaa
+  C-light = #eee
+  C-med   = #999
+  C-dark  = #555
+
+  border-width spacing
+  min-height H
+  margin (spacing * 2) 0
+
+  section.main
+    padding spacing-main
+    box-sizing border-box
+    height H-main
+    color C-dark
+
+  section.blurb
+    Background = white
+    relative top
+    height H-blurb
+    margin-bottom spacing
+    width 200px
+    text-align center
+    background Background
+    &::after
+      content ''
+      height 0
+      width 0
+      border-style solid
+      border-top-color    transparent
+      border-bottom-color transparent
+      border-right-color  transparent
+
+      size = 10px
+      absolute left 100% top ((H-blurb /2) - size)
+      border-width size
+      border-left-color Background
+
+
+    .field
+      &[data-field=name]
+        font-weight 300
+        font-size 32px
+        display block
+        text-transform lowercase
+
+      &[data-field=business]
+        font-weight 900
+        text-transform uppercase
+        font-size 11px
+        letter-spacing 1px
+
+
+  section.actions
+    user-select none
+    height H-actions
+    margin-bottom spacing
+
+    a
+      float left
+      height H-actions
+      width H-actions
+      margin-right spacing
+      background white
+
+      i
+        font-size H-actions - (spacing * 2)
+        line-height H-actions
+        text-align center
+        padding-top floor(spacing / 2)
+        display block
+
+  F-upper(size)
+    font-size size
+    letter-spacing (size * .1)
+    font-weight 600
+    text-transform uppercase
+
+  H-fig = 10px
+
+  section.data
+    relative bottom
+    height H-data
+    width 100%
+    padding 0
+    box-sizing border-box
+    color C-med
+    background white
+    overflow hidden
+
+    div
+      float left
+      height 100%
+      position relative
+      width 25%
+
+      figure
+        absolute bottom
+        width 100%
+        height H-fig + spacing
+        border spacing solid white
+        margin spacing 0
+        box-sizing border-box
+        background C-light
+        overflow hidden
+
+        .metric
+          absolute bottom
+          width 100%
+          z-index 3
+          height 100%
+          background C
+
+      figcaption
+        margin spacing * 2
+        text-align left
+
+        span
+          F-upper(11px)
+          display block
+
+    i.glyph
+      absolute bottom left
+      font-size 25px
+      width 100%
+      z-index 10
+      color rgba(black, .1)
+
+  Background = C-light
+
+  section.extensions
+    background Background
+
+    .extension
+      relative top
+      width 100%
+      display none
+      box-shadow 0 -1px 0px rgba(black, .15)
+      border-top 1px solid rgba(white, .6)
+      header
+        text-align center
+        padding 10px
+        font-size 20px
+
+      &[data-extension=map]
+        .inner
+          height H
+        .address-container
+          absolute top right
+          .time
+          .address
+            background rgba(white, .9)
+            padding 10px
+            margin 10px
+            box-shadow 0 0px 2px rgba(black, .4)
+            font-weight 500
+            text-shadow 0 1px 1px white
+            text-align center
+            text-transform capitalize
+            font-size 12px
+            text-transform uppercase
+            letter-spacing 1px
+            .value
+              font-weight 600
+
+      &[data-extension=message]
+        .inner
+          background Background
+          position relative
+          height (H / 2)
+          margin 0
+        .message-area
+          width 100%
+          height 100%
+          absolute top left
+          font-size 16px
+          opacity 1
+          text-align center
+        textarea
+          width 100%
+          height 100%
+          absolute top left
+          z-index 1
+          font-size 16px
+          line-height 24px
+          padding 15px
+          padding-left 25px
+          border none
+          box-sizing border-box
+          &:focus
+            box-shadow none
+        .send
+          position absolute
+          right 0
+      &[data-extension=reserve]
+        // display block
+        .reserve
+          span
+            display block
+
+

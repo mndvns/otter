@@ -56,24 +56,24 @@ do ->
 
   #   @ready()
 
+  mp "all_tags",      -> Tags.find!
+
   mp "my_offer",      -> Offers.findOne ownerId : @userId
 
   mp "my_tags",       -> Tags.find ownerId : @userId
   mp "my_pictures",   -> Pictures.find ownerId: @userId , status: $nin: ["deactivated"]
   mp "my_messages",   -> Messages.find involve: $in: [@userId]
   mp "my_alerts",     -> Alerts.find owner: @userId
-  mp "my_prompts",    -> Prompts.find!
+  # mp "my_prompts",    -> Prompts.find!
 
-  mp "tagsets",       -> Tagsets.find!
-  mp "sorts",         -> Sorts.find {}, sort: list_order: 1
+  # mp "sorts",         -> Sorts.find {}, { sort: list_order: 1 }, {reactive: false}
   mp "points",        -> Points.find!
 
   mp "all_offers",    ->
-    out = Offers.find!
     @ready!
+    out = Offers.find!
     out
 
-  mp "all_tags",      -> Tags.find!
   mp "all_markets",   -> Markets.find!
 
   # mp "charges",       -> Charges.find $or: [ offer-id: My.offer-id!, customer-id: My.user!.customer-id ]
@@ -81,7 +81,7 @@ do ->
   mp "purchases",     -> Purchases.find!
   mp "customers",     -> Customers.find!
 
-  mp "user_data",     -> Meteor.users.find!
+  # mp "user_data",     -> Meteor.users.find!
 
 
 
@@ -138,13 +138,13 @@ allow-user([
   Offers
   Points
   Tags
-  Tagsets
   Locations
   Pictures
 
   Markets
   Purchases
   Customers
+
 ])
 
 #                                                         //

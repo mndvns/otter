@@ -23,6 +23,9 @@ dwollaUrl = "https://www.dwolla.com/oauth/v2/token";
     this.ready();
     return out;
   });
+  mp("all_tags", function(){
+    return Tags.find();
+  });
   mp("my_offer", function(){
     return Offers.findOne({
       ownerId: this.userId
@@ -53,30 +56,14 @@ dwollaUrl = "https://www.dwolla.com/oauth/v2/token";
       owner: this.userId
     });
   });
-  mp("my_prompts", function(){
-    return Prompts.find();
-  });
-  mp("tagsets", function(){
-    return Tagsets.find();
-  });
-  mp("sorts", function(){
-    return Sorts.find({}, {
-      sort: {
-        list_order: 1
-      }
-    });
-  });
   mp("points", function(){
     return Points.find();
   });
   mp("all_offers", function(){
     var out;
-    out = Offers.find();
     this.ready();
+    out = Offers.find();
     return out;
-  });
-  mp("all_tags", function(){
-    return Tags.find();
   });
   mp("all_markets", function(){
     return Markets.find();
@@ -84,11 +71,8 @@ dwollaUrl = "https://www.dwolla.com/oauth/v2/token";
   mp("purchases", function(){
     return Purchases.find();
   });
-  mp("customers", function(){
+  return mp("customers", function(){
     return Customers.find();
-  });
-  return mp("user_data", function(){
-    return Meteor.users.find();
   });
 })();
 Alert = (function(){
@@ -165,7 +149,7 @@ allowUser = function(collections){
     return userId === doc.ownerId || My.user().type === 'admin';
   }
 };
-allowUser([Offers, Points, Tags, Tagsets, Locations, Pictures, Markets, Purchases, Customers]);
+allowUser([Offers, Points, Tags, Locations, Pictures, Markets, Purchases, Customers]);
 mapper = function(a){
   var map;
   map = _.isArray(a)

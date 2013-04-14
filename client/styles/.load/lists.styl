@@ -1,0 +1,99 @@
+
+#offer-tag-list
+  user-select none
+  padding-bottom 30px
+
+  ul
+    relative top
+    margin-bottom 30px
+    height auto
+    background #fafafa
+    box-shadow 0 1px 3px rgba(black, .3)
+    overflow hidden
+
+  i
+    relative top 3px
+
+  li
+    relative top
+    margin-left 0
+    display inline-block
+    float none
+    background none
+    color #666
+    span
+      font-weight 500
+
+    &[data-active]
+      filter grayscale(100%)
+      span
+        color rgba(black, .3)
+
+      &[data-active=true]
+        filter grayscale(0%)
+        opacity 1
+        box-shadow 0 0 2px rgba(black, .4)
+        background white
+        span
+          color black
+
+    &.footer
+    &.header
+      span-style()
+      font-size 16px
+      padding-top 5px
+      color black
+      display block
+      span
+        font-weight 600
+
+    &.sub-footer
+    &.sub-header
+      span-style()
+      color black
+      span
+        relative bottom -1px
+        font-weight 600
+        display inline-block
+        background-color transparent
+        background-image url("/shadow-line.png")
+        background-repeat no-repeat
+        background-position right
+        background-size contain
+        z-index 10
+        opacity .2
+        text-indent -7px
+        &:last-child
+          background none
+
+    input
+      relative top
+      height 100%
+      left -4.5%
+      width 104%
+
+  hr
+    &.bottom
+      relative top -1px
+      margin-top 0
+      z-index 1
+
+    &.top
+      margin-bottom 0
+
+    &.white
+      background white
+      height 1px
+
+
+#Tagsets
+  ul
+    li
+      margin-right 20px
+      font-size 20px
+      display inline
+#tags
+  ul
+    float left
+
+

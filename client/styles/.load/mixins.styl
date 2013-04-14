@@ -1,0 +1,41 @@
+
+
+span-style()
+  text-transform uppercase
+  font-size 12px
+  letter-spacing 1px
+  font-weight 500
+
+
+trans(props...)
+  duration ?= 200ms
+  transition-property unquote(join(',', props))
+  transition-duration duration
+
+trd(n)
+  transition-duration n
+
+anim(a)
+  animation-name a
+  animation-duration 200ms
+  animation-timing-function ease
+
+square(args...)
+  height args
+  width args
+
+tile(args...)
+  square(args)
+  line-height args * 1.1
+
+max(xs...)
+  for x in xs
+    {x} 100%
+
+no(xs...)
+  for x in xs
+    {x} 0
+
+space-children(n)
+  *
+    margin-left n

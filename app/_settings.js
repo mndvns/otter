@@ -1,4 +1,4 @@
-var arrayRepeat, numberWithCommas, Time, Stopwatch;
+var Stopwatch;
 String.prototype.toProperCase = function(){
   return this.replace(/\w\S*/g, function(txt){
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -9,7 +9,7 @@ String.prototype.repeat = function(num){
   out = new Array(num + 1).join("");
   return out;
 };
-arrayRepeat = function(value, len){
+this.arrayRepeat = function(value, len){
   var out;
   len += 1;
   out = [];
@@ -18,10 +18,10 @@ arrayRepeat = function(value, len){
   }
   return out;
 };
-numberWithCommas = function(x){
+this.numberWithCommas = function(x){
   return x != null ? x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : void 8;
 };
-Time = {
+this.Time = {
   now: function(){
     return Date.now();
   },
@@ -29,7 +29,7 @@ Time = {
     return moment(time).add('minutes', min).unix() * 1000;
   }
 };
-Stopwatch = (function(){
+this.Stopwatch = Stopwatch = (function(){
   Stopwatch.displayName = 'Stopwatch';
   var prototype = Stopwatch.prototype, constructor = Stopwatch;
   prototype.constructor = function(name){

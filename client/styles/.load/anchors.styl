@@ -1,0 +1,246 @@
+
+$buttonHeight = ($scope * .5)
+
+
+
+div.spotlight
+  fixed top
+  max-height $scope
+  max width
+  overflow hidden
+  .inner
+    relative top
+    width 600px
+    height 200px
+    background-image url('/spotlight.png')
+    background-repeat no-repeat
+    background-position 50%
+    background-size cover
+    // background-color hsla( 180, 90%, 50%, .6 )
+    background-color white
+    margin 0 auto
+    // opacity .5
+    -webkit-filter hue-rotate(-40deg)
+
+
+nav.anchors
+  fixed top
+  width 100%
+  z $zindexAnchors
+  height $scope
+
+  box-shadow 0 -5px 15px rgba(black, .5)
+  border-bottom 1px solid rgba(black, .4)
+
+  _c1 = lighten($bodyBackground, 100%)
+  _c2 = darken($white, 0%)
+  _(a, b, c)
+    return a rgba(c, b)
+  background linear-gradient(top, _(0, .4, _c1), _(45%, .3, _c1), _(55%, .1, _c1), _(100%, .3, _c1))
+
+  .inner
+    relative top
+    height $scope
+    max-width $width_max
+    max width
+    text-align center
+    margin 0 auto
+
+
+nav.anchors > .inner
+  li
+    icon_size           = $scope / 2
+
+    active_color        = $gray
+    inactive_color      = rgba(active_color, 1)
+
+    speed = $page_speed_4
+
+    top_margin = ($scope * .2)
+
+    font-size-line-height(n)
+      font-size n
+      line-height n
+
+    relative top
+    max-width $scope
+    width  $scope
+    height  $scope
+    float left
+
+    display inline-block
+    transition $page_speed_4
+    color inactive_color
+    font-size-line-height icon_size
+
+    &:nth-child(1) .bg
+      border-left 0
+    &:nth-child(3) .bg
+      border-right 0
+
+    &.split
+      max-width $scope * 2
+      width $scope * 2
+
+    &.active
+      width 100%
+      max-width ($width_max - ($scope * 4))
+      width calc(100% \- ($scope * 4))
+      color active_color
+
+      &:first-child
+        margin-left $scope * 2
+
+      .headline
+        animation fadeInHeadline speed
+        max-width 200px
+
+    &.inactive
+      &:hover
+        .bg
+          box-shadow 0 0 30px rgba(black, .1) inset
+          background rgba(darken($bodyBackground, 10%), .1)
+          border-right none
+          color rgba(active_color, .8)
+
+      .headline
+        animation fadeOutHeadline speed
+        max-width 0
+
+    .bg
+      absolute top
+      height 100%
+      width 100%
+      box-sizing border-box
+      border-style solid
+      border-width 0 1px
+      border-left-color   lighten(inactive_color, 60%)
+      border-right-color  rgba(white, .5)
+      bbox()
+
+
+    // &:hover
+    //   i, h1, span
+    //     color active_color
+    //     text-shadow 0 0 5px white
+
+    h1, i, .headline
+      display inline-block
+      text-shadow 0 1px 0px rgba(white, .3)
+
+    h1, .headline
+      vertical-align middle
+      margin 0
+      font-weight 400
+      line-height $scope
+      font-size icon_size
+
+    .headline
+      max-width 0
+      overflow hidden
+
+    i
+      relative left (-($spacing))
+      padding 0 $spacing
+      width 0
+      height $scope
+      line-height $scope - (icon_size / 2)
+      vertical-align middle
+      bbox()
+
+
+
+nav.menus
+  speed = $page_speed_2
+  fixed top $scope
+  opacity 1
+  color purple
+  margin 0 auto
+  z $zindexReader
+  // min-height 120px
+  box-sizing border-box
+  .transitioning &
+    transition-duration speed
+
+  .current
+  .next
+    padding-bottom $spacing
+
+  menu
+    padding-left 0
+
+  div.row
+    @extend .container-trim
+    relative top
+    bbox()
+    text-align center
+    overflow hidden
+
+    &.tags
+      $rowMenus = 3
+      $rowTags  = 2
+      text-align center
+      min-height (($buttonHeight + $spacing) * $rowTags)
+      a
+        margin 0 ($spacing / 2) $spacing
+        display inline-block
+        float none
+    [class*='span']
+      padding-left $spacing
+      padding-bottom $spacing
+      bbox()
+      &:first-child
+        padding-left 0
+      *
+        min-width 100%
+        width auto
+
+    a.item
+      &.active
+        .btn
+          background $linkColor
+          span
+            color white
+            text-shadow none
+      .btn
+        height $buttonHeight
+        bbox()
+        span
+          font-size 100%
+          // font-weight bold
+
+    span.marker
+      absolute right 100%
+      margin-right $spacing
+      height $scope
+      lh $scope
+
+nav.sidebar
+  fixed bottom
+  max width
+  z-index 1060
+  .inner
+    relative top
+    max-width $width_max
+    max width
+    text-align center
+    margin 0 auto
+    .right
+      absolute right top (-($scope))
+      width $scope * 2
+      height $scope * 2
+      padding $spacing
+      box-sizing border-box
+
+
+
+
+
+
+
+
+
+
+
+
+

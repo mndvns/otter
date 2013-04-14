@@ -1,4 +1,3 @@
-
 @font-face {
 	font-family: 'icomoon';
 	src:url('http://s3.amazonaws.com/icomoonfonts/3772/2138/f.eot');
@@ -16,6 +15,8 @@
 	content: attr(data-icon);
 	speak: none;
 	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
 }
@@ -24,26 +25,19 @@
 /*
 Instead of a list of all class selectors,
 you can use the generic selector below, but it's slower:
-[class*="glyph-"]:before {
+[class*="glyph-"] {
 */
-.glyph-drink:before, .glyph-microphone:before, .glyph-drink-2:before, .glyph-drink-3:before, .glyph-coffee:before, .glyph-ice-cream:before, .glyph-cake:before, .glyph-pacman:before, .glyph-cassette:before, .glyph-wallet:before, .glyph-gamepad:before, .glyph-bowling:before, .glyph-space-invaders:before, .glyph-batman:before, .glyph-lamp:before, .glyph-lamp-2:before, .glyph-paper-plane:before, .glyph-tag:before, .glyph-cog:before, .glyph-checkmark:before, .glyph-checkmark-2:before, .glyph-cancel:before, .glyph-cancel-2:before, .glyph-plus:before, .glyph-plus-2:before, .glyph-minus:before, .glyph-minus-2:before, .glyph-notice:before, .glyph-notice-2:before, .glyph-chart:before, .glyph-transformers:before, .glyph-pig:before, .glyph-envelope:before, .glyph-presentation:before, .glyph-open:before, .glyph-sale:before, .glyph-ampersand:before, .glyph-atom:before, .glyph-credit-card:before, .glyph-ticket:before, .glyph-rocket:before, .glyph-box:before, .glyph-diamond:before, .glyph-3d-glasses:before, .glyph-refrigerator:before, .glyph-microwave:before, .glyph-oven:before, .glyph-washing-machine:before, .glyph-eight-ball:before, .glyph-picture:before, .glyph-ipod:before, .glyph-drink-4:before, .glyph-usb:before, .glyph-switch:before, .glyph-palette:before, .glyph-moon:before, .glyph-cone:before, .glyph-hourglass:before, .glyph-gauge:before, .glyph-key:before, .glyph-book:before, .glyph-list:before, .glyph-history:before, .glyph-info:before, .glyph-question:before, .glyph-help:before, .glyph-arrow-left:before, .glyph-arrow-right:before, .glyph-arrow-up:before, .glyph-arrow-down:before, .glyph-disk:before, .glyph-pie:before, .glyph-keyboard:before, .glyph-bell:before, .glyph-cog-2:before, .glyph-bucket:before, .glyph-map:before, .glyph-book-2:before, .glyph-vote:before, .glyph-cord:before, .glyph-list-2:before, .glyph-clipboard:before, .glyph-tag-2:before, .glyph-qrcode:before, .glyph-feather:before, .glyph-pencil:before, .glyph-location:before, .glyph-map-2:before, .glyph-info-2:before {
+.glyph-drink, .glyph-coffee, .glyph-ice-cream, .glyph-cake, .glyph-pacman, .glyph-cassette, .glyph-wallet, .glyph-gamepad, .glyph-bowling, .glyph-space-invaders, .glyph-batman, .glyph-lamp, .glyph-lamp-2, .glyph-paper-plane, .glyph-tag, .glyph-cog, .glyph-checkmark, .glyph-checkmark-2, .glyph-cancel, .glyph-plus, .glyph-plus-2, .glyph-minus, .glyph-minus-2, .glyph-notice, .glyph-notice-2, .glyph-transformers, .glyph-pig, .glyph-envelope, .glyph-presentation, .glyph-ampersand, .glyph-atom, .glyph-credit-card, .glyph-ticket, .glyph-rocket, .glyph-box, .glyph-diamond, .glyph-3d-glasses, .glyph-microwave, .glyph-eight-ball, .glyph-picture, .glyph-ipod, .glyph-drink-2, .glyph-usb, .glyph-switch, .glyph-palette, .glyph-moon, .glyph-hourglass, .glyph-gauge, .glyph-key, .glyph-book, .glyph-list, .glyph-history, .glyph-info, .glyph-question, .glyph-arrow-right, .glyph-arrow-up, .glyph-arrow-down, .glyph-disk, .glyph-pie, .glyph-keyboard, .glyph-bell, .glyph-cog-2, .glyph-bucket, .glyph-map, .glyph-book-2, .glyph-vote, .glyph-cord, .glyph-list-2, .glyph-clipboard, .glyph-tag-2, .glyph-qrcode, .glyph-feather, .glyph-pencil, .glyph-info-2, .glyph-cancel-2, .glyph-microphone, .glyph-drink-3, .glyph-drink-4, .glyph-location, .glyph-cone, .glyph-arrow-left, .glyph-help, .glyph-facebook, .glyph-github-alt, .glyph-google-plus, .glyph-psbuttoncircle, .glyph-chart, .glyph-infinite, .glyph-noun_project_15043, .glyph-peace, .glyph-remote, .glyph-camera, .glyph-glasses, .glyph-fan, .glyph-harddrive, .glyph-idea, .glyph-bird, .glyph-noun_project_14104, .glyph-crying {
 	font-family: 'icomoon';
 	speak: none;
 	font-style: normal;
 	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
 }
 .glyph-drink:before {
-	content: "\e000";
-}
-.glyph-microphone:before {
-	content: "\e001";
-}
-.glyph-drink-2:before {
-	content: "\e002";
-}
-.glyph-drink-3:before {
 	content: "\e004";
 }
 .glyph-coffee:before {
@@ -98,9 +92,6 @@ you can use the generic selector below, but it's slower:
 	content: "\e014";
 }
 .glyph-cancel:before {
-	content: "\e015";
-}
-.glyph-cancel-2:before {
 	content: "\e016";
 }
 .glyph-plus:before {
@@ -121,9 +112,6 @@ you can use the generic selector below, but it's slower:
 .glyph-notice-2:before {
 	content: "\e01c";
 }
-.glyph-chart:before {
-	content: "\e01d";
-}
 .glyph-transformers:before {
 	content: "\e01e";
 }
@@ -135,12 +123,6 @@ you can use the generic selector below, but it's slower:
 }
 .glyph-presentation:before {
 	content: "\e021";
-}
-.glyph-open:before {
-	content: "\e022";
-}
-.glyph-sale:before {
-	content: "\e023";
 }
 .glyph-ampersand:before {
 	content: "\e024";
@@ -166,17 +148,8 @@ you can use the generic selector below, but it's slower:
 .glyph-3d-glasses:before {
 	content: "\e02b";
 }
-.glyph-refrigerator:before {
-	content: "\e02c";
-}
 .glyph-microwave:before {
 	content: "\e02d";
-}
-.glyph-oven:before {
-	content: "\e02e";
-}
-.glyph-washing-machine:before {
-	content: "\e02f";
 }
 .glyph-eight-ball:before {
 	content: "\e030";
@@ -187,7 +160,7 @@ you can use the generic selector below, but it's slower:
 .glyph-ipod:before {
 	content: "\e032";
 }
-.glyph-drink-4:before {
+.glyph-drink-2:before {
 	content: "\e033";
 }
 .glyph-usb:before {
@@ -201,9 +174,6 @@ you can use the generic selector below, but it's slower:
 }
 .glyph-moon:before {
 	content: "\e037";
-}
-.glyph-cone:before {
-	content: "\e038";
 }
 .glyph-hourglass:before {
 	content: "\e039";
@@ -228,12 +198,6 @@ you can use the generic selector below, but it's slower:
 }
 .glyph-question:before {
 	content: "\e040";
-}
-.glyph-help:before {
-	content: "\e041";
-}
-.glyph-arrow-left:before {
-	content: "\e042";
 }
 .glyph-arrow-right:before {
 	content: "\e043";
@@ -292,12 +256,82 @@ you can use the generic selector below, but it's slower:
 .glyph-pencil:before {
 	content: "\e052";
 }
-.glyph-location:before {
-	content: "\e054";
-}
-.glyph-map-2:before {
-	content: "\e055";
-}
 .glyph-info-2:before {
 	content: "\e056";
 }
+.glyph-cancel-2:before {
+	content: "\e015";
+}
+.glyph-microphone:before {
+	content: "\e001";
+}
+.glyph-drink-3:before {
+	content: "\e002";
+}
+.glyph-drink-4:before {
+	content: "\e000";
+}
+.glyph-location:before {
+	content: "\e054";
+}
+.glyph-cone:before {
+	content: "\e038";
+}
+.glyph-arrow-left:before {
+	content: "\e042";
+}
+.glyph-help:before {
+	content: "\e041";
+}
+.glyph-facebook:before {
+	content: "\f09a";
+}
+.glyph-github-alt:before {
+	content: "\f113";
+}
+.glyph-google-plus:before {
+	content: "\f0d5";
+}
+.glyph-psbuttoncircle:before {
+	content: "\f2bb";
+}
+.glyph-chart:before {
+	content: "\e01d";
+}
+.glyph-infinite:before {
+	content: "\e022";
+}
+.glyph-noun_project_15043:before {
+	content: "\e023";
+}
+.glyph-peace:before {
+	content: "\e02c";
+}
+.glyph-remote:before {
+	content: "\e02e";
+}
+.glyph-camera:before {
+	content: "\e02f";
+}
+.glyph-glasses:before {
+	content: "\e055";
+}
+.glyph-fan:before {
+	content: "\e057";
+}
+.glyph-harddrive:before {
+	content: "\e058";
+}
+.glyph-idea:before {
+	content: "\e059";
+}
+.glyph-bird:before {
+	content: "\e05a";
+}
+.glyph-noun_project_14104:before {
+	content: "\e05b";
+}
+.glyph-crying:before {
+	content: "\e05c";
+}
+

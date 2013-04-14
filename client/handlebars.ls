@@ -8,6 +8,15 @@ do ->
     else
       moment().fromNow()
 
+  hh \find, ->
+    window[it].find!
+
+  hh \global, ->
+    window[&0][&1]?()
+
+
+
+
   hh "my", ->
     My?[it]?!
 
@@ -91,35 +100,36 @@ do ->
     new Handlebars.SafeString result
 
 
-  hh "page_next", (area) ->
-    shift_sub_area = Session.get("shift_sub_area")
-    if area isnt shift_sub_area then return false
+  hh "tmpl", (name) ->
+    Template[name]()
 
-    parse_sub_area = shift_sub_area.split("_").join("/")
-    # console.log("PARSE SUB AREA", parse_sub_area)
-    Meteor.Transitioner.setOptions after: ->
-      Meteor.Router.to (if shift_sub_area is "home" then "/" else "/" + parse_sub_area)
-      Session.set "shift_sub_area", null
+  hh "page", (name) ->
+    page = Pages.find-one name: name
+    Template[page]()
 
-    return shift_sub_area
+  hh "form", (name) ->
+    Template.form Forms.find-one { name: name } {reactive: true }
 
-  hh "sublink", (page, link) ->
-    store_page = Store.get("page_#{page}")
-    if store_page is (page + "_" + link)
-      return page + "/" + link
-      console.log(page + "/" + link)
 
-  hh "next_page", ->
-    shift_sub_area = Session.get("shift_sub_area")
-    unless shift_sub_area then return
 
-    parse_sub_area = shift_sub_area.split("_").join("/")
+  hh "display_name", ->
+    u = My.user!
 
-    Meteor.Transitioner.setOptions after: ->
-      Meteor.Router.to (if shift_sub_area is "home" then "/" else "/" + parse_sub_area)
-      Session.set "shift_sub_area", null
+    switch
+    | u.username      => return u.username.split(' ')[0]
+    | u.profile.name  => return u.profile.name.split(' ')[0]
 
-    Template[shift_sub_area]()
+
+
+    # options.fn Forms.find-one name: name
+
+  # hh "current_reader",  -> Template["reader_" + Session.get("shift_current")]?()
+  # hh "next_reader",     -> Template["reader_" + Session.get("shift_sub_area")?.split('_')[0]]?()
+
+  hh 'stable', -> 
+    if Session.get 'loaded_stables' isnt true => return
+    window[it]?.find {}, { reactive: false }
+
 
   hh "show_block", (template_name) ->
 

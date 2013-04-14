@@ -9,3 +9,5 @@ uploads
 packages
 
 Cakefile
+
+*.psd

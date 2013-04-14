@@ -1,5 +1,55 @@
 
 
+
+template(name='form')
+  <form data-validate='parsley' {{attr}} id={{name}} style='{{style}}'>
+
+  {{#each rows  }} <div class='{{class}}' style='{{style}}' {{attr}}>
+  {{#each groups}} <div class='{{class}}' style='{{style}}' {{attr}}>
+
+  {{#if label}}
+  label.control-label {{label}}
+    {{#if tip}}
+    i.tip.glyph-help(data-toggle="tooltip", title="{{tip}}")
+    {{/if}}
+  {{/if}}
+
+  {{#each fields}}
+  <{{elem}} class='{{class}}' style='{{style}}' {{attr}}>
+  {{#if icon}}
+  <i class=glyph-{{icon}}></i>
+  {{/if}}
+  {{{text}}}
+  </{{elem}}>
+  {{/each}}
+
+  </div> {{/each}}
+  </div> {{/each}}
+  {{#if error}}
+  .alert.alert-error
+    button(type="button", data-dismiss="alert").close
+    {{error}}
+  {{/if}}
+
+  </form>
+
+
+template(name='account_join')
+  .row-fluid
+    .span8
+      {{{form 'login'}}}
+      {{loginButtons}}
+    .span4
+      {{{form 'services'}}}
+
+template(name='account_signup')
+  .row-fluid
+    .span4
+      h3 asdasd
+    .span8
+      {{{form 'signup'}}}
+
+
 mixin Field( opt )
   .control-group
     label.control-label #{opt.label}
