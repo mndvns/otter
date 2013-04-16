@@ -71,9 +71,9 @@
         "commit": "fe5f71cf03f10ba1bf9483a85e8290c9db028ea2"
       },
       "jade-handlebars": {
-        "git": "https://github.com/SimonDegraeve/meteor-jade-handlebars.git",
+        "git": "https://github.com/mvanasse/meteor-jade-handlebars.git",
         "tag": "v0.2.7",
-        "commit": "82f6f9ac43a68ffabe1d9b9620be2a4ca6790b56"
+        "commit": "2a608709bf44b2ad1696113538903b01e509443b"
       },
       "observatory": {
         "git": "https://github.com/jhoxray/observatory.git",
