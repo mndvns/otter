@@ -33,7 +33,7 @@
       "stripe": {
         "git": "https://github.com/appleifreak/stripe-meteor.git",
         "tag": "v1.0.0",
-        "commit": "152de8922a7e0f3d1d131ef457d566f8654c0743"
+        "commit": "7319dac8986115f88f740af3fdb29abf88d63ce8"
       },
       "collectionFS": {
         "git": "https://github.com/raix/Meteor-CollectionFS.git",
