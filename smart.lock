@@ -9,7 +9,6 @@
       "moment": {},
       "router": {},
       "imgur": {},
-      "assert": {},
       "underscore-inflection": {},
       "jade-handlebars": {}
     },
@@ -28,11 +27,6 @@
         "git": "https://github.com/grmlin/meteor-imgur.git",
         "tag": "v0.1.0",
         "commit": "0781b66ce15a4d9afaed98455761a5b7a2104125"
-      },
-      "assert": {
-        "git": "https://github.com/peerlibrary/meteor-assert.git",
-        "tag": "v0.1.0",
-        "commit": "bd421be4cfe9c396b56e99673773fd9bfd2baee3"
       },
       "underscore-inflection": {
         "git": "https://github.com/pius/meteor-underscore-inflection.git",
