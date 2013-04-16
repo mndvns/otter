@@ -8,16 +8,10 @@
     "basePackages": {
       "moment": {},
       "router": {},
-      "stripe": {},
-      "collectionFS": {},
       "imgur": {},
-      "publish-with-relations": {},
-      "event-horizon": {},
-      "session-extras": {},
       "assert": {},
       "underscore-inflection": {},
-      "jade-handlebars": {},
-      "observatory": {}
+      "jade-handlebars": {}
     },
     "packages": {
       "moment": {
@@ -30,35 +24,10 @@
         "tag": "v0.4.4",
         "commit": "1cc6f24579cf9f3cfe0a42f1bd3e42cdc2491a5f"
       },
-      "stripe": {
-        "git": "https://github.com/appleifreak/stripe-meteor.git",
-        "tag": "v1.0.0",
-        "commit": "7319dac8986115f88f740af3fdb29abf88d63ce8"
-      },
-      "collectionFS": {
-        "git": "https://github.com/raix/Meteor-CollectionFS.git",
-        "tag": "v0.1.9",
-        "commit": "ac12b7df64a5499ade275f8351752afdc8255c29"
-      },
       "imgur": {
         "git": "https://github.com/grmlin/meteor-imgur.git",
         "tag": "v0.1.0",
         "commit": "0781b66ce15a4d9afaed98455761a5b7a2104125"
-      },
-      "publish-with-relations": {
-        "git": "https://github.com/erundook/meteor-publish-with-relations.git",
-        "tag": "v0.1.5",
-        "commit": "98213e9f056b139597c99fb9ec2884ae6be76d91"
-      },
-      "event-horizon": {
-        "git": "https://github.com/belisarius222/meteor-event-horizon.git",
-        "tag": "v0.1.1",
-        "commit": "f7d19e16bf7527c34d853a9bc9002e9be53bdb9b"
-      },
-      "session-extras": {
-        "git": "https://github.com/belisarius222/meteor-session-extras.git",
-        "tag": "v0.3.0",
-        "commit": "0c49d41009821e76f46af3ad65d0a1d5bfa8d4eb"
       },
       "assert": {
         "git": "https://github.com/peerlibrary/meteor-assert.git",
@@ -75,20 +44,10 @@
         "tag": "v0.2.7",
         "commit": "2a608709bf44b2ad1696113538903b01e509443b"
       },
-      "observatory": {
-        "git": "https://github.com/jhoxray/observatory.git",
-        "tag": "v0.2.1",
-        "commit": "3a3302c086fc9e9c59adf9dfc01e88d746f6c501"
-      },
       "page-js-ie-support": {
         "git": "https://github.com/tmeasday/meteor-page-js-ie-support.git",
         "tag": "v1.3.5",
         "commit": "b99ed8380aefd10b2afc8f18d9eed4dd0d8ea9cb"
-      },
-      "observatory-apollo": {
-        "git": "https://github.com/superstringsoftware/observatory-apollo.git",
-        "branch": "master",
-        "commit": "b754bb265ef3df07a406f2b342a169e951e6caee"
       }
     }
   }
