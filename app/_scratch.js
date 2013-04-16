@@ -247,7 +247,7 @@ GENERATE([
           'class': "row-fluid",
           groups: [{
             label: "Access Code",
-            tip: "we need your access code and stuff",
+            tip: "This is the exclusive code given to you allowing you entry to the site.",
             'class': "span12",
             fields: [{
               elem: "input",
@@ -264,7 +264,7 @@ GENERATE([
             groups: [
               {
                 label: "Full Name",
-                tip: "this is a tip",
+                tip: "Just your first and last name. You middle, too, if you're feeling crazy.",
                 'class': "span6",
                 fields: [{
                   elem: "input",
@@ -272,7 +272,7 @@ GENERATE([
                 }]
               }, {
                 label: "Email (optional)",
-                tip: "this is a tip",
+                tip: "This is the email we'll use in case you forget your password. Otherwise, you'll never receive an email from us. Scouts' honor.",
                 'class': "span6",
                 fields: [{
                   elem: "input",
@@ -285,7 +285,7 @@ GENERATE([
             groups: [
               {
                 label: "Password",
-                tip: "this is a tip",
+                tip: "You password can be as secure or insecure as you like -- just make sure it's at least 5 characters long.",
                 'class': "span6",
                 fields: [{
                   elem: "input",
@@ -293,7 +293,7 @@ GENERATE([
                 }]
               }, {
                 label: "Username",
-                tip: "this is a tip",
+                tip: "Your username must be unique and over 5 characters.",
                 'class': "span6",
                 fields: [{
                   elem: "input",
