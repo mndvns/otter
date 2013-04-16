@@ -31,8 +31,6 @@ App.Templates = {};
     });
   });
 })();
-Stripe.setPublishableKey("pk_test_xB8tcSbkx4mwjHjxZtSMuZDf");
-Stripe.client_id = "ca_131FztgqheXRmq6vudxED4qdTPtZTjNt";
 this.Store = Meteor.BrowserStore;
 Store.clear = function(){
   var keys, keeps, diffs, i$, len$, diff, results$ = [];

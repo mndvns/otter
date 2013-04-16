@@ -44,8 +44,8 @@ do ->
 
 
 
-Stripe.set-publishable-key("pk_test_xB8tcSbkx4mwjHjxZtSMuZDf") 
-Stripe.client_id = "ca_131FztgqheXRmq6vudxED4qdTPtZTjNt"
+# Stripe.set-publishable-key("pk_test_xB8tcSbkx4mwjHjxZtSMuZDf") 
+# Stripe.client_id = "ca_131FztgqheXRmq6vudxED4qdTPtZTjNt"
 
 @Store = Meteor.Browser-store
 
