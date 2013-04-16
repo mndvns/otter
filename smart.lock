@@ -8,7 +8,6 @@
     "basePackages": {
       "moment": {},
       "router": {},
-      "stripe": {},
       "imgur": {},
       "assert": {},
       "underscore-inflection": {},
@@ -24,11 +23,6 @@
         "git": "https://github.com/tmeasday/meteor-router.git",
         "tag": "v0.4.4",
         "commit": "1cc6f24579cf9f3cfe0a42f1bd3e42cdc2491a5f"
-      },
-      "stripe": {
-        "git": "https://github.com/appleifreak/stripe-meteor.git",
-        "tag": "v1.0.0",
-        "commit": "7319dac8986115f88f740af3fdb29abf88d63ce8"
       },
       "imgur": {
         "git": "https://github.com/grmlin/meteor-imgur.git",

@@ -21,7 +21,6 @@ http
 moment
 jade-handlebars
 router
-stripe
 imgur
 assert
 underscore-inflection

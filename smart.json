@@ -5,7 +5,6 @@
   "packages": {
     "moment": {},
     "router": {},
-    "stripe": {},
     "imgur": {},
     "assert": {},
     "underscore-inflection": {},
