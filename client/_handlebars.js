@@ -142,10 +142,44 @@ var slice$ = [].slice;
       reactive: true
     }));
   });
+  hh("holder_style", function(it){
+    if (it) {
+      return Session.get("holder_style_" + it);
+    }
+  });
+  hh("holder_set", function(name){
+    var hh, run, this$ = this;
+    hh == null && (hh = null);
+    if (Session.get("holder_style_" + name)) {
+      return;
+    }
+    run = function(){
+      var F, C, ch, H, hh, ph, OUT;
+      F = $(".row-holder");
+      C = F.parents('.container-trim');
+      ch = parseInt(C.css("padding-top"));
+      H = F.parents('.holder');
+      hh = _.max(H.children().map(function(){
+        return $(this).height();
+      }).get());
+      if (hh > 1) {
+        ph = C.parent().height();
+        OUT = function(){
+          return (ph / 2 - hh / 2 - ch * 1.5).toString() + "px";
+        }();
+        return Session.set("holder_style_" + name, "margin-top : " + OUT + ";\nvisibility : visible;");
+      }
+    };
+    if (hh < 1) {
+      _.delay(run, 50);
+    }
+  });
   hh("display_name", function(){
     var u;
     u = My.user();
     switch (false) {
+    case !!u:
+      break;
     case !u.username:
       return u.username.split(' ')[0];
     case !u.profile.name:

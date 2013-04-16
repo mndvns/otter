@@ -1,4 +1,4 @@
-var GENERATE, MIX, link_href, link_active, link_activate, toString$ = {}.toString;
+var GENERATE, MIX, hrefize, link_href, link_active, link_activate, toString$ = {}.toString;
 GENERATE = App.Utils.Generate;
 MIX = App.Utils.Mix;
 GENERATE([
@@ -148,51 +148,59 @@ GENERATE([
       }, {
         name: "home",
         display: "connectedkc",
-        glyph: "camera",
+        glyph: "city",
         arrow: "up"
       }, {
         name: "account",
         display: "account",
-        glyph: "cog",
+        glyph: "remote",
         arrow: "right"
       }
     ]
   }, 0, {
-    rendered: function(){
-      var current;
-      console.log("RENDERED ANCHOR");
-      current = Session.get("shift_current_area").split('_')[0];
-      if (current === this.data.name) {
-        return $(this.find('li')).trigger('click');
-      }
-    },
     events: function(){
       return {
         'click li': function(event, tmp){
-          var t, ref$, store_area, store_sub_area, sub_area;
-          t = $(event.currentTarget);
-          switch (false) {
-          case !t.is('.active'):
-            return;
-          case tmp.data.name !== Session.get("shift_current_area").split('_')[0]:
-            return;
-          case tmp.data.name !== ((ref$ = Session.get("shift_next_area")) != null ? ref$.split('_')[0] : void 8):
-            return;
-          }
-          t.siblings().attr('class', 'inactive');
-          t.attr('class', 'active');
-          t.parent().attr('data-active-anchor', this.name);
-          if (t.index() === 1) {
-            t.siblings().addClass('split');
-          }
-          store_area = Store.get("page_" + this.name) || this.name;
-          store_sub_area = Store.get("page_" + store_area);
-          sub_area = store_sub_area || store_area;
-          Session.set('shift_sub_area', sub_area);
-          return Session.set('shift_next_area', this.name);
+          var x$;
+          x$ = this;
+          x$.activate();
+          return x$;
         }
       };
     }()
+  }, {
+    proto: {
+      activate: function(){
+        var t, ref$;
+        t = $("[data-shift-area=" + this.name + "]");
+        if (t.is('.active')) {
+          return;
+        }
+        t.siblings().attr('class', 'inactive');
+        t.attr('class', 'active');
+        t.parent().attr('data-active-anchor', this.name);
+        t.parents("main").attr('data-active-anchor', this.name);
+        if (t.index() === 1) {
+          t.siblings().addClass('split');
+        }
+        switch (false) {
+        case this.name !== ((ref$ = Session.get("shift_next_area")) != null ? ref$.split('_')[0] : void 8):
+          break;
+        case this.name !== Session.get("shift_current_area").split('_')[0]:
+          break;
+        default:
+          return this.areaSet();
+        }
+      },
+      areaSet: function(){
+        var store_area, store_sub_area, sub_area;
+        store_area = Store.get("page_" + this.name) || this.name;
+        store_sub_area = Store.get("page_" + store_area);
+        sub_area = store_sub_area || store_area;
+        Session.set('shift_sub_area', sub_area);
+        return Session.set('shift_next_area', this.name);
+      }
+    }
   }
 ]);
 GENERATE([
@@ -206,6 +214,48 @@ GENERATE([
     },
     stable: [
       {
+        name: "services",
+        rows: [{
+          groups: [{
+            'class': "services",
+            fields: [
+              {
+                elem: "button",
+                'class': "btn-service btn-facebook wide",
+                attr: "data-service=facebook",
+                text: "with Facebook",
+                icon: "facebook"
+              }, {
+                elem: "button",
+                'class': "btn-service btn-google wide",
+                attr: "data-service=google",
+                text: "with Google",
+                icon: "google-plus"
+              }, {
+                elem: "button",
+                'class': "btn-service btn-github wide",
+                attr: "data-service=github",
+                text: "with Github",
+                icon: "github-alt"
+              }
+            ]
+          }]
+        }]
+      }, {
+        name: "verify",
+        rows: [{
+          'class': "row-fluid",
+          groups: [{
+            label: "Access Code",
+            tip: "we need your access code and stuff",
+            'class': "span12",
+            fields: [{
+              elem: "input",
+              attr: "id = access_code\ndata-required = true\ndata-trigger  = change"
+            }]
+          }]
+        }]
+      }, {
         name: "signup",
         rows: [
           {
@@ -280,34 +330,6 @@ GENERATE([
           }
         ]
       }, {
-        name: "services",
-        rows: [{
-          groups: [{
-            'class': "services",
-            fields: [
-              {
-                elem: "button",
-                'class': "btn-facebook wide",
-                attr: "data-service=facebook",
-                text: "with Facebook",
-                icon: "facebook"
-              }, {
-                elem: "button",
-                'class': "btn-google wide",
-                attr: "data-service=google",
-                text: "with Google",
-                icon: "google-plus"
-              }, {
-                elem: "button",
-                'class': "btn-github wide",
-                attr: "data-service=github",
-                text: "with Github",
-                icon: "github-alt"
-              }
-            ]
-          }]
-        }]
-      }, {
         name: "login",
         rows: [
           {
@@ -365,41 +387,43 @@ GENERATE([
     ]
   }, 0, {
     rendered: function(){
-      this.toolTip == null && (this.toolTip = $('.tip').tooltip());
-      return this.data.center();
+      var code;
+      $('.tip').tooltip();
+      if (code = this.find('#access_code')) {
+        return $(code).val(Store.get("access_code"));
+      }
+    },
+    destroyed: function(){
+      var x$;
+      x$ = this.data;
+      x$.set('error', null);
+      x$.save();
+      return x$;
     },
     events: function(){
       return {
-        'click [data-service]': function(e, t){
-          e.preventDefault();
-          return Meteor["loginWith" + e.currentTarget.getAttribute("data-service").toProperCase()]();
-        },
         'click [data-link]': function(e, t){
           e.preventDefault();
           return Meteor.Router.to(e.currentTarget.getAttribute("data-link"));
         },
-        'click button#login': function(e, t){
+        'click .alert .close': function(e, t){
+          return $(e.currentTarget).parent().fadeOut('fast', function(){
+            var x$;
+            x$ = t.data;
+            x$.set("error", null);
+            x$.save();
+            return x$;
+          });
+        },
+        'click [data-service]': function(e, t){
           e.preventDefault();
           return (function(){
             var this$ = this;
-            return this.formValidate(function(it){
-              return Meteor.loginWithPassword(it.user, it.password, function(it){
-                var x$, y$;
-                switch (false) {
-                case !it:
-                  x$ = this$;
-                  x$.set("error", it.reason);
-                  x$.save();
-                  return x$;
-                  break;
-                default:
-                  y$ = this$;
-                  y$.set("error", null);
-                  y$.save();
-                  Meteor.Router.to('/account/profile');
-                  return console.log("LOGGED IN USER");
-                }
-              });
+            return this.formVerify(function(it){
+              if (it.error) {
+                return this$.setError(it.error);
+              }
+              return Meteor["loginWith" + e.currentTarget.getAttribute("data-service").toProperCase()]();
             });
           }.call(t.data));
         },
@@ -407,29 +431,51 @@ GENERATE([
           e.preventDefault();
           return (function(){
             var this$ = this;
-            return this.formValidate(function(res){
-              return Accounts.createUser({
-                username: res.username,
-                email: res.email,
-                password: res.password,
-                profile: {
-                  name: res.name
+            return this.formVerify(function(it){
+              if (it.error) {
+                return this$.setError(it.error);
+              }
+              return this$.formValidate(function(it){
+                if (it.error) {
+                  return this$.setError(it.error);
                 }
-              }, function(it){
-                var x$, y$;
-                switch (false) {
-                case !it:
-                  x$ = this$;
-                  x$.set("error", it.reason);
-                  x$.save();
-                  return x$;
-                  break;
-                default:
-                  y$ = this$;
-                  y$.set("error", null);
-                  y$.save();
-                  return console.log("SAVED USER", res.username);
+                return Accounts.createUser({
+                  username: it.username,
+                  email: it.email,
+                  password: it.password,
+                  profile: {
+                    name: it.name
+                  }
+                }, function(it){
+                  this$.setError(it != null ? it.reason : void 8);
+                  if (it) {
+                    return;
+                  }
+                  return this$.signInRoute();
+                });
+              });
+            });
+          }.call(t.data));
+        },
+        'click button#login': function(e, t){
+          e.preventDefault();
+          return (function(){
+            var this$ = this;
+            return this.formVerify(function(it){
+              if (it.error) {
+                return this$.setError(it.error);
+              }
+              return this$.formValidate(function(it){
+                if (it.error) {
+                  return this$.setError(it.error);
                 }
+                return Meteor.loginWithPassword(it.user, it.password, function(it){
+                  this$.setError(it != null ? it.reason : void 8);
+                  if (it) {
+                    return;
+                  }
+                  return this$.signInRoute();
+                });
               });
             });
           }.call(t.data));
@@ -438,56 +484,63 @@ GENERATE([
     }()
   }, {
     proto: {
-      formValidate: function(cb){
+      signInRoute: function(){
+        var ref$;
+        Store.set("access_code", $('#access_code').val());
+        Meteor.Router.to('/account/profile');
+        return console.log(((ref$ = My.user()) != null ? ref$.username : void 8) + " SIGNED IN");
+      },
+      formVerify: function(it){
+        switch (false) {
+        case $('input#access_code').val() === "secret":
+          return it({
+            error: "Access code is incorrect"
+          });
+        default:
+          return it({});
+        }
+      },
+      formValidate: function(it){
         var form;
         form = $("form#" + this.name);
-        if (!form.parsley('validate')) {
-          return;
+        switch (false) {
+        case !form.parsley('validate'):
+          return it(Form.serialize(form));
+        default:
+          return it({
+            error: "Values must be entered correctly"
+          });
         }
-        return cb(Form.serialize(form));
       },
-      center: function(){
-        var ch, ref$, run, this$ = this;
-        ch == null && (ch = null);
-        if (((ref$ = this.style) != null ? ref$.length : void 8) != null) {
-          return;
-        }
-        run = function(){
-          var F, C, ch, cp, P, ph, OUT, x$;
-          F = $('form');
-          C = F.parents('.container-trim');
-          ch = C.height();
-          cp = parseInt(C.css("padding-top"));
-          if (ch > 1) {
-            P = C.parent();
-            ph = P.height();
-            OUT = function(){
-              return (ph / 2 - ch / 2 - cp - 30).toString() + "px";
-            }();
-            x$ = this$;
-            x$.set("style", "margin-top: " + OUT + ";\nvisibility: visible;");
-            x$.save();
-            return x$;
-          }
-        };
-        if (ch < 1) {
-          console.log("IT's LESS THAN 1");
-          return _.delay(run, 50);
-        }
+      setError: function(it){
+        var x$;
+        x$ = this;
+        x$.set("error", {
+          text: it,
+          type: 'error'
+        } || null);
+        x$.save();
+        return x$;
       }
     }
   }
 ]);
+hrefize = function(href, cb){
+  var _href;
+  _href = href.href.split('/');
+  _href.shift();
+  return _href.join('_');
+};
 link_href = function(it){
-  return "active_menu_links_" + it.href.split('/')[1];
+  return "page_" + it.href.split('/')[1];
 };
 link_active = function(it){
-  if (it.name === Session.get(link_href(it))) {
+  if (hrefize(it) === Store.get(link_href(it))) {
     return "active";
   }
 };
 link_activate = function(it){
-  return Session.set(link_href(it), it.name);
+  return Store.set(link_href(it), hrefize(it));
 };
 GENERATE([
   {
@@ -511,7 +564,31 @@ GENERATE([
           }
         }]
       }, {
-        name: "account"
+        name: "about",
+        pages: ['about', 'about_synopsis', 'about_faq', 'about_blog'],
+        rows: [{
+          items: [
+            {
+              name: "synopsis",
+              href: "/about/synopsis",
+              'class': function(){
+                return link_active(this);
+              }
+            }, {
+              name: "faq",
+              href: "/about/faq",
+              'class': function(){
+                return link_active(this);
+              }
+            }, {
+              name: "blog",
+              href: "/about/blog",
+              'class': function(){
+                return link_active(this);
+              }
+            }
+          ]
+        }]
       }, {
         name: "account",
         pages: ['account_profile', 'account_profile_settings', 'account_offer'],

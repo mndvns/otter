@@ -2,6 +2,8 @@
 GENERATE = App.Utils.Generate
 MIX      = App.Utils.Mix
 
+
+### TAG
 GENERATE {}=
   * klass : \Tag
     mix   : <[ Check Limit Clone ]>
@@ -75,6 +77,7 @@ GENERATE {}=
         return fout
 
 
+### READER
 # GENERATE {}=
 #   * klass   : \Reader
 #   * coll    : \Readers
@@ -183,6 +186,7 @@ GENERATE {}=
 
 Session?.set-default "shift_next_area", null
 
+### ANCHOR
 GENERATE {}=
   * klass : \Anchor
     mix   : <[ Cite ]>
@@ -198,49 +202,40 @@ GENERATE {}=
 
       * name    : "home"
         display : "connectedkc"
-        glyph   : "camera"
+        glyph   : "city"
         arrow   : "up"
 
       * name    : "account"
         display : "account"
-        glyph   : "cog"
+        glyph   : "remote"
         arrow   : "right"
 
   * 0
 
-  * rendered  : -> 
-      console.log "RENDERED ANCHOR"
-      # unless Session.get("rendered_main") => return false
-
-      current = Session.get("shift_current_area").split('_')[0]
-
-      # @past ?= Date.now!
-      # present = Date.now!
-      # passage = present - @past
-      # @past = present
-
-      # console.log "PASSAGE", passage
-      # if passage < 0 => return
-
-      if (current is @data.name)
-        $ @find 'li' .trigger 'click'
-
-
-    events    : do ->
+  * events: do ->
       'click li' : (event, tmp)->
-        t = $ event.current-target
+        @ ..activate!
 
-        switch
-        | t.is '.active' => return
-        | tmp.data.name is Session.get "shift_current_area" .split('_')[0]  => return
-        | tmp.data.name is Session.get "shift_next_area" ?.split('_')[0]    => return
+
+  * proto :
+      activate: ->
+        t = $ "[data-shift-area=#{@name}]"
+
+        if t.is '.active' => return
 
         t.siblings!attr 'class', 'inactive'
         t.attr 'class', 'active'
         t.parent!.attr 'data-active-anchor', @name
+        t.parents "main" .attr 'data-active-anchor', @name
 
         if t.index! is 1 => t.siblings!add-class 'split'
 
+        switch
+        | @name is Session.get "shift_next_area" ?.split('_')[0]    => return
+        | @name is Session.get "shift_current_area" .split('_')[0]  => return
+        | _ => @area-set!
+
+      area-set: ->
         store_area     = Store.get("page_" + @name ) or @name
         store_sub_area = Store.get("page_" + store_area )
         sub_area       = store_sub_area or store_area
@@ -248,8 +243,7 @@ GENERATE {}=
         Session.set 'shift_sub_area', sub_area
         Session.set 'shift_next_area', @name
 
-
-###
+### FORM
 GENERATE {}=
   * klass : \Form
     mix   : <[ ]>
@@ -258,6 +252,52 @@ GENERATE {}=
     trans   : -> Form.new it
     stable  : []=
 
+      ### SERVICES 
+      * name    : "services"
+        rows    :
+
+          * groups  :
+
+              * class : "services"
+                fields  :
+                  * elem  : "button"
+                    class : "btn-service btn-facebook wide"
+                    attr  : "data-service=facebook"
+                    text  : "with Facebook"
+                    icon  : "facebook"
+                  * elem  : "button"
+                    class : "btn-service btn-google wide"
+                    attr  : "data-service=google"
+                    text  : "with Google"
+                    icon  : "google-plus"
+                  * elem  : "button"
+                    class : "btn-service btn-github wide"
+                    attr  : "data-service=github"
+                    text  : "with Github"
+                    icon  : "github-alt"
+              ...
+          ...
+
+      ### VERIFY
+      * name    : "verify"
+        rows    :
+          * class   : "row-fluid"
+            groups  :
+              * label : "Access Code"
+                tip   : "we need your access code and stuff"
+                class : "span12"
+                fields  :
+                  * elem  : "input"
+                    attr  : """
+                      id = access_code
+                      data-required = true
+                      data-trigger  = change
+                    """
+                  ...
+              ...
+          ...
+
+      ### SIGNUP
       * name    : "signup"
         rows    :
 
@@ -356,31 +396,7 @@ GENERATE {}=
                     attr  : "id=signup"
                 ...
 
-      * name    : "services"
-        rows    :
-
-          * groups  :
-
-              * class : "services"
-                fields  :
-                  * elem  : "button"
-                    class : "btn-facebook wide"
-                    attr  : "data-service=facebook"
-                    text  : "with Facebook"
-                    icon  : "facebook"
-                  * elem  : "button"
-                    class : "btn-google wide"
-                    attr  : "data-service=google"
-                    text  : "with Google"
-                    icon  : "google-plus"
-                  * elem  : "button"
-                    class : "btn-github wide"
-                    attr  : "data-service=github"
-                    text  : "with Github"
-                    icon  : "github-alt"
-              ...
-          ...
-
+      ### LOGIN
       * name    : "login"
         rows    :
 
@@ -452,86 +468,105 @@ GENERATE {}=
 
   * 0
 
+  ### TEMPLATE
   * rendered  : ->
-      @tool-tip ?= $ '.tip' .tooltip!
+      $ '.tip' .tooltip!
+      if code = @find '#access_code'
+        $ code .val Store.get "access_code"
 
-      @data.center!
+    destroyed : ->
+      @data ..set 'error', null ..save!
 
     events    : do ->
-      'click [data-service]'  : (e, t) ->
-        e.prevent-default!
-        Meteor[ "loginWith" + e.current-target.get-attribute("data-service").to-proper-case! ]!
 
       'click [data-link]'     : (e, t) ->
         e.prevent-default!
         Meteor.Router.to e.current-target.get-attribute "data-link"
 
-      'click button#login'   : (e, t) ->
-        e.prevent-default!
-        let @ = t.data
-          @form-validate ~>
-            Meteor.login-with-password it.user, it.password, ~>
-              | it => @ ..set "error", it.reason ..save!
-              | _
-                @ ..set "error", null ..save!
-                Meteor.Router.to '/account/profile'
+      'click .alert .close'   : (e, t) ->
 
-                console.log "LOGGED IN USER"
+        <- $ e.current-target .parent!.fade-out 'fast'
+        t.data ..set "error", null ..save!
+
+
+      'click [data-service]'  : (e, t) ->
+        e.prevent-default!
+
+        let @ = t.data
+          <~ @form-verify
+          if it.error => return @set-error it.error
+
+          Meteor[ "loginWith" + e.current-target.get-attribute("data-service").to-proper-case! ]!
 
       'click button#signup'   : (e, t) ->
         e.prevent-default!
         let @ = t.data
-          @form-validate (res) ~>
-            Accounts.create-user {res.username, res.email, res.password, profile: {res.name}}, ~>
-              | it => @ ..set "error", it.reason ..save!
-              | _
-                @ ..set "error", null ..save!
+          <~ @form-verify
+          if it.error => return @set-error it.error
 
-                console.log "SAVED USER", res.username
+          <~ @form-validate
+          if it.error => return @set-error it.error
+
+          <~ Accounts.create-user {it.username, it.email, it.password, profile: {it.name}}
+          @set-error it?.reason
+          if it => return
+
+          @sign-in-route!
+
+      'click button#login'   : (e, t) ->
+        e.prevent-default!
+        let @ = t.data
+          <~ @form-verify
+          if it.error => return @set-error it.error
+
+          <~ @form-validate
+          if it.error => return @set-error it.error
+
+          <~ Meteor.login-with-password it.user, it.password
+          @set-error it?.reason
+          if it => return
+
+          @sign-in-route!
 
 
+  ### FUNCTIONS
   * proto  :
-      form-validate : ( cb ) ->
+      sign-in-route : -> 
+        Store.set "access_code", ($ '#access_code' .val!)
+        Meteor.Router.to '/account/profile'
+        console.log "#{My.user()?.username} SIGNED IN"
+
+      form-verify   : -> 
+        switch
+        | $ 'input#access_code' .val! isnt "secret" => it {error: "Access code is incorrect"}
+        | _                                         => it {}
+
+      form-validate : ->
         form = $ "form##{@name}"
-        unless form.parsley 'validate' => return
-        cb Form.serialize form
 
-      center : ->
-        ch ?= null
+        switch
+        | form.parsley 'validate' => it Form.serialize form
+        | _                       => it {error: "Values must be entered correctly"}
 
-        if @style?.length? => return
-
-        run = ~>
-          F  = $ 'form'
-          C  = F.parents '.container-trim' 
-          ch = C.height!
-          cp = parse-int C.css("padding-top")
-
-          if ch > 1
-            P  = C.parent!
-            ph = P.height!
-
-            OUT = do -> ((ph / 2) - (ch / 2) - cp - 30).to-string! + "px"
-
-            @ ..set "style", """
-                margin-top: #{OUT};
-                visibility: visible;
-                """
-              ..save!
-
-        if ch < 1
-          console.log "IT's LESS THAN 1"
-          _.delay run, 50
+      set-error : -> @ ..set "error", ({text: it, type: 'error'} or null) ..save!
 
 
 
+hrefize = (href, cb)->
+  _href = href.href.split('/')
+  _href.shift!
+  _href.join('_')
 
-link_href     = -> "active_menu_links_" + it.href.split('/')[1]
-link_active   = -> if it.name is Session.get link_href it => "active"
-link_activate = -> Session.set (link_href it), it.name
+link_href     = -> "page_" + it.href.split('/')[1]
+
+link_active   = ->
+  if (hrefize it) is Store.get link_href it => "active"
+
+link_activate = -> 
+  Store.set (link_href it), (hrefize it)
 
 
-
+### MENU
 GENERATE {}=
   * klass : \Menu
     mix   : <[ ]>
@@ -550,7 +585,26 @@ GENERATE {}=
               Tag.rated.find query .fetch!
             ...
 
-      * name  : "account"
+      * name  : "about"
+        pages : <[
+          about
+          about_synopsis
+          about_faq
+          about_blog
+          ]>
+        rows  :
+          * items :
+              * name : "synopsis"
+                href : "/about/synopsis"
+                class: -> link_active @
+              * name : "faq"
+                href : "/about/faq"
+                class: -> link_active @
+              * name : "blog"
+                href : "/about/blog"
+                class: -> link_active @
+            ...
+
 
       * name  : "account"
         pages : <[
@@ -580,6 +634,7 @@ GENERATE {}=
       'click a': (e, t) ->
         if @href
           link_activate @
+
         # else
         #   if not _.contains sg, @name
         #     ss sg ++ @name
@@ -587,11 +642,10 @@ GENERATE {}=
         #     ss _.without sg, @name
 
 
-
 # Session.set 'loaded_stables', true
 
 
-
+### PROMPT
 GENERATE {}=
   * klass : \Prompt
     mix   : <[]>

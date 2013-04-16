@@ -150,8 +150,13 @@ body
   {{> main }}
 
 template(name="main")
-  .spotlight: .inner
   main
+    .background
+      // .image
+      .color
+    // .spotlight
+    //   .bg
+    //   .image
     nav.anchors: .inner
       {{> anchors }}
     nav.menus
@@ -175,12 +180,11 @@ template(name="anchors")
   {{/each}}
 
 template(name='anchor')
-  li( data-shift-area= '{{name}}' ).inactive
-    .bg
+  li(data-shift-area='{{name}}')
+    .border
     i(class='glyph-{{glyph}}')
     .headline
       h1 &nbsp;{{display}}
-
 
 // MENUS
 template(name="menus")
@@ -201,13 +205,13 @@ template(name='menu')
 // CONTENT
 template(name="content")
   .current
-    {{#constant}} {{/constant}}
     .container-trim
+      {{#constant}} {{/constant}}
       {{#isolate}} {{{current_page}}} {{/isolate}}
 
   .next
-    {{#constant}} {{/constant}}
     .container-trim
+      {{#constant}} {{/constant}}
       {{#isolate}} {{{next_page}}} {{/isolate}}
 
 
@@ -223,8 +227,18 @@ template(name='home')
   {{> intro }}
   {{/if}}
 
+template(name='home_launch')
+  #launch: .inner
+    h3.tagline.
+      Everything in Kansas City.<br>
+      Everyone in Kansas City.<br>
 
-template(name='intro')
+    h1.huge Connected<strong>KC</strong>
+
+    h3.tagline.
+      Coming soon.
+
+template(name='home_intro')
   #intro
     .body
       {{#constant}}

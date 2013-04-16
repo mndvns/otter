@@ -1,3 +1,4 @@
+
 @font-face {
 	font-family: 'icomoon';
 	src:url('http://s3.amazonaws.com/icomoonfonts/3772/2138/f.eot');
@@ -27,7 +28,7 @@ Instead of a list of all class selectors,
 you can use the generic selector below, but it's slower:
 [class*="glyph-"] {
 */
-.glyph-drink, .glyph-coffee, .glyph-ice-cream, .glyph-cake, .glyph-pacman, .glyph-cassette, .glyph-wallet, .glyph-gamepad, .glyph-bowling, .glyph-space-invaders, .glyph-batman, .glyph-lamp, .glyph-lamp-2, .glyph-paper-plane, .glyph-tag, .glyph-cog, .glyph-checkmark, .glyph-checkmark-2, .glyph-cancel, .glyph-plus, .glyph-plus-2, .glyph-minus, .glyph-minus-2, .glyph-notice, .glyph-notice-2, .glyph-transformers, .glyph-pig, .glyph-envelope, .glyph-presentation, .glyph-ampersand, .glyph-atom, .glyph-credit-card, .glyph-ticket, .glyph-rocket, .glyph-box, .glyph-diamond, .glyph-3d-glasses, .glyph-microwave, .glyph-eight-ball, .glyph-picture, .glyph-ipod, .glyph-drink-2, .glyph-usb, .glyph-switch, .glyph-palette, .glyph-moon, .glyph-hourglass, .glyph-gauge, .glyph-key, .glyph-book, .glyph-list, .glyph-history, .glyph-info, .glyph-question, .glyph-arrow-right, .glyph-arrow-up, .glyph-arrow-down, .glyph-disk, .glyph-pie, .glyph-keyboard, .glyph-bell, .glyph-cog-2, .glyph-bucket, .glyph-map, .glyph-book-2, .glyph-vote, .glyph-cord, .glyph-list-2, .glyph-clipboard, .glyph-tag-2, .glyph-qrcode, .glyph-feather, .glyph-pencil, .glyph-info-2, .glyph-cancel-2, .glyph-microphone, .glyph-drink-3, .glyph-drink-4, .glyph-location, .glyph-cone, .glyph-arrow-left, .glyph-help, .glyph-facebook, .glyph-github-alt, .glyph-google-plus, .glyph-psbuttoncircle, .glyph-chart, .glyph-infinite, .glyph-noun_project_15043, .glyph-peace, .glyph-remote, .glyph-camera, .glyph-glasses, .glyph-fan, .glyph-harddrive, .glyph-idea, .glyph-bird, .glyph-noun_project_14104, .glyph-crying {
+.glyph-drink, .glyph-coffee, .glyph-ice-cream, .glyph-cake, .glyph-pacman, .glyph-cassette, .glyph-wallet, .glyph-gamepad, .glyph-bowling, .glyph-space-invaders, .glyph-batman, .glyph-lamp, .glyph-lamp-2, .glyph-paper-plane, .glyph-tag, .glyph-cog, .glyph-checkmark, .glyph-checkmark-2, .glyph-cancel, .glyph-plus, .glyph-plus-2, .glyph-minus, .glyph-minus-2, .glyph-notice, .glyph-notice-2, .glyph-transformers, .glyph-pig, .glyph-envelope, .glyph-presentation, .glyph-ampersand, .glyph-atom, .glyph-credit-card, .glyph-ticket, .glyph-rocket, .glyph-box, .glyph-diamond, .glyph-3d-glasses, .glyph-microwave, .glyph-eight-ball, .glyph-picture, .glyph-ipod, .glyph-drink-2, .glyph-usb, .glyph-switch, .glyph-palette, .glyph-moon, .glyph-hourglass, .glyph-gauge, .glyph-key, .glyph-book, .glyph-list, .glyph-history, .glyph-info, .glyph-question, .glyph-arrow-right, .glyph-arrow-up, .glyph-arrow-down, .glyph-disk, .glyph-pie, .glyph-keyboard, .glyph-bell, .glyph-cog-2, .glyph-bucket, .glyph-map, .glyph-book-2, .glyph-vote, .glyph-cord, .glyph-list-2, .glyph-clipboard, .glyph-tag-2, .glyph-qrcode, .glyph-feather, .glyph-pencil, .glyph-info-2, .glyph-cancel-2, .glyph-microphone, .glyph-drink-3, .glyph-drink-4, .glyph-location, .glyph-cone, .glyph-arrow-left, .glyph-help, .glyph-facebook, .glyph-github-alt, .glyph-google-plus, .glyph-psbuttoncircle, .glyph-chart, .glyph-infinite, .glyph-noun_project_15043, .glyph-peace, .glyph-remote, .glyph-camera, .glyph-glasses, .glyph-fan, .glyph-harddrive, .glyph-idea, .glyph-bird, .glyph-noun_project_14104, .glyph-crying, .glyph-city {
 	font-family: 'icomoon';
 	speak: none;
 	font-style: normal;
@@ -334,4 +335,6 @@ you can use the generic selector below, but it's slower:
 .glyph-crying:before {
 	content: "\e05c";
 }
-
+.glyph-city:before {
+	content: "\e05d";
+}

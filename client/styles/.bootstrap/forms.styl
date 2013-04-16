@@ -9,16 +9,24 @@ input_padding = $spacing
 form_color    = $darker($grayLight)
 
 form
-  visibility hidden
+  // visibility hidden
 
   color form_color
-  label 
+  _label_margin = 5px
+
+  .label-space
+    margin-top $baseLineHeight + _label_margin
+
+  label
+    margin-bottom _label_margin
     text-transform uppercase
     font-size $formFontSize
     .tip
+      position relative
       padding-left $baseFontSize
       font-size $baseFontSize
-      vertical-align middle
+      vertical-align top
+
   input
     color form_color
     background transparent
@@ -34,6 +42,7 @@ form
       background $light($red)
   [class*=row]
     margin-bottom $spacing
+  .row-holder &
   .row-fluid &
     input
       width calc(100% \- (input_padding + $spacing))
@@ -62,7 +71,7 @@ form
     display inline-block
     box-sizing border-box
 
-    background rgba(white, .4)
+    background rgba($grayLighter, .4)
     border-width 1px
     border-style solid
     border-color rgba(black, .03)
@@ -81,13 +90,13 @@ form
       text-align right
 
 
-  .services
-    margin-left $spacing
+  &#services
+    margin-left $spacing * 2
     min-width 180px
-    padding $spacing $spacing_2
-    padding-right 0
-    border-left 1px solid $dark($grayLighter)
-    box-sizing border-box
+    // padding $spacing $spacing_2
+    // padding-right 0
+    // border-left 1px solid $dark($grayLighter)
+    // box-sizing border-box
     size = $spacing * 1.5
 
     i
@@ -105,7 +114,7 @@ form
       text-indent 0
       border-right 1px solid rgba(white, .2)
 
-    button
+    .btn-service
       position relative
       top 0
       margin-bottom $spacing
@@ -120,9 +129,9 @@ form
 // --------------
 
 // Make all forms have space below them
-form {
-  margin: 0 0 $baseLineHeight;
-}
+// form {
+//   margin: 0 0 $baseLineHeight;
+// }
 
 fieldset {
   padding: 0;
@@ -354,6 +363,10 @@ select[class*="span"],
 textarea[class*="span"],
 .uneditable-input[class*="span"],
 // Redeclare since the fluid row class is more specific
+.row-holder input[class*="span"],
+.row-holder select[class*="span"],
+.row-holder textarea[class*="span"],
+.row-holder .uneditable-input[class*="span"],
 .row-fluid input[class*="span"],
 .row-fluid select[class*="span"],
 .row-fluid textarea[class*="span"],
@@ -366,6 +379,12 @@ textarea[class*="span"],
 .input-append .uneditable-input[class*="span"],
 .input-prepend input[class*="span"],
 .input-prepend .uneditable-input[class*="span"],
+.row-holder input[class*="span"],
+.row-holder select[class*="span"],
+.row-holder textarea[class*="span"],
+.row-holder .uneditable-input[class*="span"],
+.row-holder .input-prepend [class*="span"],
+.row-holder .input-append [class*="span"],
 .row-fluid input[class*="span"],
 .row-fluid select[class*="span"],
 .row-fluid textarea[class*="span"],

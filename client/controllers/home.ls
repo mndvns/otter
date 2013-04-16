@@ -38,146 +38,68 @@
 Template.main.rendered = ->
   Session.setDefault "rendered_main", true
 
-Template.content.events {}=
-
-  'click .accord header': (event, tmpl) ->
-    if not $(event.target).hasClass "active"
-      $(event.currentTarget).siblings().slideDown()
-    else
-      $(event.currentTarget).siblings().slideUp()
-    $(event.target).toggleClass "active"
-
 
 validate-area = 
   account :
-    * exclude :
-        * \account_join
-        * \account_signup
-        * \account_login
+    * exclude : <[
+        account_join
+        account_signup
+        account_login
+        ]>
       test    : -> not My.user()?
       onfail  : -> 'account_join'
     ...
 
-areas = 
-  account :
-    nav   : -> Tags.find!fetch!
-
-
-
+  home :
+    * exclude : <[
+        home_launch
+        ]>
+      test    : -> not My.user()?
+      onfail  : -> 'home_launch'
+    ...
 
 get-area = (session_area, cb) ->
-    area = Session.get session_area
-    unless area then return
+  area = Session.get session_area
+  unless area then return
 
-    if val = validate-area[ area.split('_')[0] ]
-      for v in val
-        unless area in v.exclude
-          if v.test!
-            area = v.onfail!
-            break
+  if val = validate-area[ area.split('_')[0] ]
+    for v in val
+      unless area in v.exclude
+        if v.test!
+          area = v.onfail!
+          break
 
-    cb area
+  cb area
+
+get-menu = -> get-area it, (area) ->
+  if menu = Menus.find-one pages: area
+    Template.menu menu
+
 
 
 Template.content.helpers {}=
-
   current_page  : -> get-area "shift_current_area", (area) ->
-
     Template[ area ]()
 
   next_page     : -> get-area "shift_sub_area", (area) ->
-
     parse_area      = area.split '_'
     parse_sub_area  = parse_area.join '/'
 
     Meteor.Transitioner.set-options after: ->
       Meteor.Router.to (if parse_sub_area is "home" then "/" else "/" + parse_sub_area)
 
-      Session.set "shift_current_menu", area
-      Session.set "shift_current_area", area
-
-      Session.set "shift_sub_area", null
-      Session.set "shift_next_menu", null
-
-    Session.set "shift_next_menu", area
-
     Template[ area ]()
 
-
-# Template.content.rendered = ->
-# 
-#   @grab-height = Deps.autorun ->
-# 
-#     Session.get("RANGO")
-# 
-#     q = $ '.content .current .container-trim' .height!
-#     z = $ '.content .next .container-trim' .height!
-# 
-#     # console.log "Cnt CURRENT", q
-#     console.log "Cnt NEXT", z
-# 
-
 Template.menus.helpers {}=
-
-  current_menu: ->
-    if menu = Menus.find-one pages: Session.get "shift_current_menu"
-      Template.menu menu
-
-  next_menu   : ->
-    if menu = Menus.find-one pages: Session.get "shift_next_menu"
-      Session.set "RANGO", Random.id!
-      Template.menu menu
+  current_menu: -> get-menu "shift_current_area"
+  next_menu   : -> get-menu "shift_sub_area"
 
 
 
 
 
-Template.sidebar.events {}=
-  'click .logout': ->
-    Meteor.logout!
 
-
-Template.home.helpers {}=
-  get_offers: ->
-
-    @coll ?= new Meteor.Collection null
-
-    if not @offers?.length => @offers = Offer.load-all @coll
-    unless @offers => return
-
-    ranges =
-      updatedAt   : []
-      nearest     : []
-      points      : []
-      price       : []
-
-    result = @coll.find(
-      Store.get("current_tagsets"),
-      Store.get("current_sorts")
-      reactive: true
-    ).map (d)->
-
-        for r of ranges
-          ranges[r].push d[r]
-
-        d
-
-    for r of ranges
-      amplify.store "max_#{r}", _.max(ranges[r])
-      amplify.store "min_#{r}", _.min(ranges[r])
-
-    result
-
-
-
-  styleDate: (date) ->
-    moment(date).fromNow()
-
-
-#////////////////////////////////////////////
-#  $$ intro
-
-Template.intro.events {}=
+Template.home_intro.events {}=
   'click #getLocation': (event, tmpl) ->
     Meteor.Alert.set {}=
       text: "One moment while we charge the lasers..."
@@ -227,11 +149,69 @@ Template.intro.events {}=
           lat: userLoc[0]
           long: userLoc[1]
 
+Template.home_launch.rendered = ->
+  # window_height = $('main').height() / 2
+  # launch = $(@find('#launch'))
+  # launch_height = (launch.outerHeight() * 0.75)
+  # launch.css {}=
+  #   'top': window_height - launch_height
 
-Template.intro.rendered = ->
-  window_height = $(".current").height() / 2
-  intro = $(@find('#intro'))
-  intro_height = (intro.outerHeight() * 0.75)
-  intro.css {}=
-    'margin-top': window_height - intro_height
+
+Template.content.events {}=
+  'click .accord header': (event, tmpl) ->
+    if not $(event.target).hasClass "active"
+      $(event.currentTarget).siblings().slideDown()
+    else
+      $(event.currentTarget).siblings().slideUp()
+    $(event.target).toggleClass "active"
+
+
+
+
+Template.anchors.rendered = ->
+  current = Session.get("shift_current_area").split('_')[0]
+  $ "li[data-shift-area=#{current}]" .trigger 'click'
+
+
+Template.sidebar.events {}=
+  'click .logout': ->
+    # console.log "CURRENT", Session.get("shift_current_area")
+    Meteor.logout!
+
+
+Template.home.helpers {}=
+  get_offers: ->
+
+    @coll ?= new Meteor.Collection null
+
+    if not @offers?.length => @offers = Offer.load-all @coll
+    unless @offers => return
+
+    ranges =
+      updatedAt   : []
+      nearest     : []
+      points      : []
+      price       : []
+
+    result = @coll.find(
+      Store.get("current_tagsets"),
+      Store.get("current_sorts")
+      reactive: true
+    ).map (d)->
+
+        for r of ranges
+          ranges[r].push d[r]
+
+        d
+
+    for r of ranges
+      amplify.store "max_#{r}", _.max(ranges[r])
+      amplify.store "min_#{r}", _.min(ranges[r])
+
+    result
+
+
+
+  styleDate: (date) ->
+    moment(date).fromNow()
 

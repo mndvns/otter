@@ -1,4 +1,4 @@
-var validateArea, areas, getArea;
+var validateArea, getArea, getMenu;
 this.statCurrent = function(){
   var out;
   out = {
@@ -42,16 +42,6 @@ this.statRange = function(){
 Template.main.rendered = function(){
   return Session.setDefault("rendered_main", true);
 };
-Template.content.events({
-  'click .accord header': function(event, tmpl){
-    if (!$(event.target).hasClass("active")) {
-      $(event.currentTarget).siblings().slideDown();
-    } else {
-      $(event.currentTarget).siblings().slideUp();
-    }
-    return $(event.target).toggleClass("active");
-  }
-});
 validateArea = {
   account: [{
     exclude: ['account_join', 'account_signup', 'account_login'],
@@ -61,14 +51,16 @@ validateArea = {
     onfail: function(){
       return 'account_join';
     }
-  }]
-};
-areas = {
-  account: {
-    nav: function(){
-      return Tags.find().fetch();
+  }],
+  home: [{
+    exclude: ['home_launch'],
+    test: function(){
+      return My.user() == null;
+    },
+    onfail: function(){
+      return 'home_launch';
     }
-  }
+  }]
 };
 getArea = function(session_area, cb){
   var area, val, i$, len$, v;
@@ -89,6 +81,16 @@ getArea = function(session_area, cb){
   }
   return cb(area);
 };
+getMenu = function(it){
+  return getArea(it, function(area){
+    var menu;
+    if (menu = Menus.findOne({
+      pages: area
+    })) {
+      return Template.menu(menu);
+    }
+  });
+};
 Template.content.helpers({
   current_page: function(){
     return getArea("shift_current_area", function(area){
@@ -102,80 +104,24 @@ Template.content.helpers({
       parse_sub_area = parse_area.join('/');
       Meteor.Transitioner.setOptions({
         after: function(){
-          Meteor.Router.to(parse_sub_area === "home"
+          return Meteor.Router.to(parse_sub_area === "home"
             ? "/"
             : "/" + parse_sub_area);
-          Session.set("shift_current_menu", area);
-          Session.set("shift_current_area", area);
-          Session.set("shift_sub_area", null);
-          return Session.set("shift_next_menu", null);
         }
       });
-      Session.set("shift_next_menu", area);
       return Template[area]();
     });
   }
 });
 Template.menus.helpers({
   current_menu: function(){
-    var menu;
-    if (menu = Menus.findOne({
-      pages: Session.get("shift_current_menu")
-    })) {
-      return Template.menu(menu);
-    }
+    return getMenu("shift_current_area");
   },
   next_menu: function(){
-    var menu;
-    if (menu = Menus.findOne({
-      pages: Session.get("shift_next_menu")
-    })) {
-      Session.set("RANGO", Random.id());
-      return Template.menu(menu);
-    }
+    return getMenu("shift_sub_area");
   }
 });
-Template.sidebar.events({
-  'click .logout': function(){
-    return Meteor.logout();
-  }
-});
-Template.home.helpers({
-  get_offers: function(){
-    var ref$, ranges, result, r;
-    this.coll == null && (this.coll = new Meteor.Collection(null));
-    if (!((ref$ = this.offers) != null && ref$.length)) {
-      this.offers = Offer.loadAll(this.coll);
-    }
-    if (!this.offers) {
-      return;
-    }
-    ranges = {
-      updatedAt: [],
-      nearest: [],
-      points: [],
-      price: []
-    };
-    result = this.coll.find(Store.get("current_tagsets"), Store.get("current_sorts"), {
-      reactive: true
-    }).map(function(d){
-      var r;
-      for (r in ranges) {
-        ranges[r].push(d[r]);
-      }
-      return d;
-    });
-    for (r in ranges) {
-      amplify.store("max_" + r, _.max(ranges[r]));
-      amplify.store("min_" + r, _.min(ranges[r]));
-    }
-    return result;
-  },
-  styleDate: function(date){
-    return moment(date).fromNow();
-  }
-});
-Template.intro.events({
+Template.home_intro.events({
   'click #getLocation': function(event, tmpl){
     var noLocation, foundLocation;
     Meteor.Alert.set({
@@ -241,15 +187,62 @@ Template.intro.events({
     });
   }
 });
-Template.intro.rendered = function(){
-  var window_height, intro, intro_height;
-  window_height = $(".current").height() / 2;
-  intro = $(this.find('#intro'));
-  intro_height = intro.outerHeight() * 0.75;
-  return intro.css({
-    'margin-top': window_height - intro_height
-  });
+Template.home_launch.rendered = function(){};
+Template.content.events({
+  'click .accord header': function(event, tmpl){
+    if (!$(event.target).hasClass("active")) {
+      $(event.currentTarget).siblings().slideDown();
+    } else {
+      $(event.currentTarget).siblings().slideUp();
+    }
+    return $(event.target).toggleClass("active");
+  }
+});
+Template.anchors.rendered = function(){
+  var current;
+  current = Session.get("shift_current_area").split('_')[0];
+  return $("li[data-shift-area=" + current + "]").trigger('click');
 };
+Template.sidebar.events({
+  'click .logout': function(){
+    return Meteor.logout();
+  }
+});
+Template.home.helpers({
+  get_offers: function(){
+    var ref$, ranges, result, r;
+    this.coll == null && (this.coll = new Meteor.Collection(null));
+    if (!((ref$ = this.offers) != null && ref$.length)) {
+      this.offers = Offer.loadAll(this.coll);
+    }
+    if (!this.offers) {
+      return;
+    }
+    ranges = {
+      updatedAt: [],
+      nearest: [],
+      points: [],
+      price: []
+    };
+    result = this.coll.find(Store.get("current_tagsets"), Store.get("current_sorts"), {
+      reactive: true
+    }).map(function(d){
+      var r;
+      for (r in ranges) {
+        ranges[r].push(d[r]);
+      }
+      return d;
+    });
+    for (r in ranges) {
+      amplify.store("max_" + r, _.max(ranges[r]));
+      amplify.store("min_" + r, _.min(ranges[r]));
+    }
+    return result;
+  },
+  styleDate: function(date){
+    return moment(date).fromNow();
+  }
+});
 function in$(x, arr){
   var i = -1, l = arr.length >>> 0;
   while (++i < l) if (x === arr[i] && i in arr) return true;

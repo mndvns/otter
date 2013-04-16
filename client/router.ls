@@ -1,10 +1,13 @@
 
 
 set-area = ->
+  # $ "li[data-shift-area=#{it.split('_')[0]}]" .trigger 'click'
+
   Session.set "shift_current_area", it
-  j = $ "li[data-shift-area=#{it.split('_')[0]}]" 
-  # console.log "JJJJJ", j
-  j.trigger 'click'
+
+  Session.set "shift_sub_area", null
+  Session.set "shift_next_menu", null
+
 
 Meteor.Router.add {}=
   "/": ->

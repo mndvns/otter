@@ -1,26 +1,64 @@
 
 $buttonHeight = ($scope * .5)
 
+div.background
+div.background *
+  fixed top left
+  max height width
+
+div.background
+  // .image
+  //   background-image url('/kc_bg.jpg')
+  //   background-size cover
+  //   background-repeat no-repeat
+  //   background-position 50%
+
+  .color
+    transition $page_speed
+    background-color $clr_main
+    [data-active-anchor=about] &
+    [data-active-anchor=account] &
+      background-color $white
 
 
-div.spotlight
-  fixed top
-  max-height $scope
-  max width
-  overflow hidden
-  .inner
-    relative top
-    width 600px
-    height 200px
-    background-image url('/spotlight.png')
-    background-repeat no-repeat
-    background-position 50%
-    background-size cover
-    // background-color hsla( 180, 90%, 50%, .6 )
-    background-color white
-    margin 0 auto
-    // opacity .5
-    -webkit-filter hue-rotate(-40deg)
+
+// div.spotlight
+//   fixed top
+//   max-height $scope
+//   max width
+//   overflow hidden
+//   z ($zindexAnchors - 10)
+// 
+//   transition $page_speed
+//   opacity 0
+// 
+//   [data-active-anchor=about] &
+//   [data-active-anchor=account] &
+//     opacity 1
+// 
+//   _clr = #438bb2
+// 
+//   .bg
+//     absolute top
+//     max height width
+//     background-color _clr
+//     z 10
+// 
+//   .image
+//     opacity 0
+//     relative top
+//     z 20
+//     width 600px
+//     height 200px
+//     background-image url('/spotlight.png')
+//     background-repeat no-repeat
+//     background-position 50%
+//     background-size cover
+//     // background-color hsla( 180, 90%, 50%, .6 )
+//     // background-color white
+//     margin 0 auto
+//     // opacity .5
+//     -webkit-filter hue-rotate(-40deg)
 
 
 nav.anchors
@@ -28,15 +66,16 @@ nav.anchors
   width 100%
   z $zindexAnchors
   height $scope
+  background $clr_main
 
-  box-shadow 0 -5px 15px rgba(black, .5)
-  border-bottom 1px solid rgba(black, .4)
+  // box-shadow 0 -5px 15px rgba(black, .5)
+  // border-bottom 1px solid rgba(black, .4)
 
-  _c1 = lighten($bodyBackground, 100%)
-  _c2 = darken($white, 0%)
-  _(a, b, c)
-    return a rgba(c, b)
-  background linear-gradient(top, _(0, .4, _c1), _(45%, .3, _c1), _(55%, .1, _c1), _(100%, .3, _c1))
+  // _c1 = lighten($bodyBackground, 100%)
+  // _c2 = darken($white, 0%)
+  // _(a, b, c)
+  //   return a rgba(c, b)
+  // // background linear-gradient(top, _(0, .4, _c1), _(45%, .3, _c1), _(55%, .1, _c1), _(100%, .3, _c1))
 
   .inner
     relative top
@@ -46,13 +85,11 @@ nav.anchors
     text-align center
     margin 0 auto
 
-
-nav.anchors > .inner
   li
     icon_size           = $scope / 2
 
-    active_color        = $gray
-    inactive_color      = rgba(active_color, 1)
+    active_color        = $white
+    inactive_color      = rgba(active_color, .7)
 
     speed = $page_speed_4
 
@@ -70,15 +107,19 @@ nav.anchors > .inner
 
     display inline-block
     transition $page_speed_4
-    color inactive_color
     font-size-line-height icon_size
+    i
+      transition 0
+      color inactive_color
 
-    &:nth-child(1) .bg
-      border-left 0
-    &:nth-child(3) .bg
-      border-right 0
+    &:first-child .border
+      border-width 0 1px 0 0
+    &:last-child .border
+      border-width 0 0 0 1px
 
     &.split
+      .border
+        border-color transparent
       max-width $scope * 2
       width $scope * 2
 
@@ -86,10 +127,14 @@ nav.anchors > .inner
       width 100%
       max-width ($width_max - ($scope * 4))
       width calc(100% \- ($scope * 4))
-      color active_color
+
+      i, .headline
+        color active_color
 
       &:first-child
         margin-left $scope * 2
+      &:nth-child(2)
+        opacity 0
 
       .headline
         animation fadeInHeadline speed
@@ -97,41 +142,30 @@ nav.anchors > .inner
 
     &.inactive
       &:hover
-        .bg
-          box-shadow 0 0 30px rgba(black, .1) inset
-          background rgba(darken($bodyBackground, 10%), .1)
-          border-right none
-          color rgba(active_color, .8)
+        i
+          color active_color
 
       .headline
         animation fadeOutHeadline speed
         max-width 0
 
-    .bg
+    .border
       absolute top
-      height 100%
       width 100%
-      box-sizing border-box
+      height $scope - ($spacing * 2)
+      margin $spacing 0
+      border-width 0px
       border-style solid
-      border-width 0 1px
-      border-left-color   lighten(inactive_color, 60%)
-      border-right-color  rgba(white, .5)
-      bbox()
+      border-color lighten(inactive_color, 60%)
 
-
-    // &:hover
-    //   i, h1, span
-    //     color active_color
-    //     text-shadow 0 0 5px white
 
     h1, i, .headline
       display inline-block
-      text-shadow 0 1px 0px rgba(white, .3)
 
     h1, .headline
       vertical-align middle
       margin 0
-      font-weight 400
+      font-weight 200
       line-height $scope
       font-size icon_size
 

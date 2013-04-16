@@ -7,8 +7,13 @@
 @import 'intro'
 @import 'admin'
 @import 'lists'
+@import 'text'
 @import 'anchors'
+@import 'pages'
 
+
+// .btn
+//   padding $spacing
 
 button
   @extends .btn
@@ -23,6 +28,22 @@ button
   display block
   float none!important
   margin 0 auto!important
+  text-align center
+  *
+    float none
+    display block
+    text-align center
+
+[class*=span].hug
+.hug
+  margin-left 0
+  margin-right 0
+
+
+.pad-right
+  padding-right $spacing * 2
+  border-right 1px dashed rgba(black, .2)
+  bbox()
 
 
 li
@@ -76,17 +97,20 @@ hr
     margin 70px 0
     background-image linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,.1), rgba(0,0,0,0))
 
+main
+  relative top
+  // relative top ($scope)
+
 html
   overflow-x hidden
   background $bodyBackground
-  // scale(0.7)
+  // scale(.5)
 
 
 html
 body
 main
 div.content
-div.container
 div.current
 div.next
   height 100%!important

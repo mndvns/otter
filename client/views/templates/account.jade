@@ -2,7 +2,7 @@
 
 
 template(name='form')
-  <form data-validate='parsley' {{attr}} id={{name}} style='{{style}}'>
+  <form data-validate='parsley' class='{{class}}' id={{name}} style='{{style}}' {{attr}}>
 
   {{#each rows  }} <div class='{{class}}' style='{{style}}' {{attr}}>
   {{#each groups}} <div class='{{class}}' style='{{style}}' {{attr}}>
@@ -25,29 +25,45 @@ template(name='form')
 
   </div> {{/each}}
   </div> {{/each}}
-  {{#if error}}
-  .alert.alert-error
-    button(type="button", data-dismiss="alert").close
-    {{error}}
-  {{/if}}
+
+  {{#with error}}
+  {{> alert}}
+  {{/with}}
 
   </form>
 
+template(name="alert")
+  div(class="alert alert-{{type}}")
+    button(type="button").close ×
+    {{text}}
 
 template(name='account_join')
-  .row-fluid
-    .span8
-      {{{form 'login'}}}
-      {{loginButtons}}
-    .span4
-      {{{form 'services'}}}
+  {{holder_set "join"}}
+  .holder(style="{{holder_style 'join'}}")
+    .row-holder.heading
+      h1 Sign In To Connected<strong>KC</strong>
+    .row-holder
+      .span9.pad-right
+        {{{form 'verify'}}}
+        {{{form 'login'}}}
+      .span3.hug
+        {{{form 'services'}}}
 
 template(name='account_signup')
-  .row-fluid
-    .span4
-      h3 asdasd
-    .span8
-      {{{form 'signup'}}}
+  {{holder_set "signup"}}
+  .holder(style="{{holder_style 'signup'}}")
+    .row-holder.heading
+      h1 Join Connected<strong>KC</strong>
+    .row-holder
+      .span9.pad-right
+        {{{form 'verify'}}}
+        {{{form 'signup'}}}
+      .span3.hug
+        {{{form 'services'}}}
+
+// template(name='account_verify')
+//   form
+//     input.span12 asdasdsa
 
 
 mixin Field( opt )

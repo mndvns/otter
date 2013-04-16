@@ -1,108 +1,69 @@
 do ->
 
-  # sits in front of the router and provides 'currentPage' and 'nextPage',
-  # whilst setting the correct classes on the body to allow transitions, namely:
-  #
-  #   body.transitioning.from_X.to_Y
-
   class Transitioner
     ->
-      @_currentPage = null
-      @_currentPageListeners = new Deps.Dependency()
-      @_nextPage = null
-      @_nextPageListeners = new Deps.Dependency()
+      @_current-page = null
+      @_current-page-listeners = new Deps.Dependency()
+      @_next-page = null
+      @_next-page-listeners = new Deps.Dependency()
       @_direction = null
       @_options = {}
 
-    _transitionEvents : "webkitTransitionEnd.transitioner oTransitionEnd.transitioner transitionEnd.transitioner msTransitionEnd.transitioner transitionend.transitioner"
-    _transitionClasses : ->
-      "transitioning from_" + @_currentPage + " to_" + @_nextPage + " going_" + @_direction
+    _transition-events : "webkitTransitionEnd.transitioner oTransitionEnd.transitioner transitionEnd.transitioner msTransitionEnd.transitioner transitionend.transitioner"
+    _transition-classes : ->
+      "transitioning from_" + @_current-page + " to_" + @_next-page + " going_" + @_direction
 
-    setOptions : (options) ->
-      _.extend @_options, options
+    set-options : ->
+      _.extend @_options, it
 
-    currentPage : ->
-      Deps.depend @_currentPageListeners
-      @_currentPage
+    current-page : ->
+      Deps.depend @_current-page-listeners
+      @_current-page
 
-    _setCurrentPage : (page) ->
-      @_currentPage = page
-      @_currentPageListeners.changed()
+    _set-current-page : ->
+      @_current-page = it
+      @_current-page-listeners.changed!
 
-    nextPage : ->
-      Deps.depend @_nextPageListeners
-      @_nextPage
+    next-page : ->
+      Deps.depend @_next-page-listeners
+      @_next-page
 
-    _setNextPage : (page) ->
-      @_nextPage = page
-      @_nextPageListeners.changed()
+    _set-next-page : ->
+      @_next-page = it
+      @_next-page-listeners.changed!
 
     listen : ->
-      self = this
-      Deps.autorun ->
-        self.transition Session.get('shift_next_area')
+      <~ Deps.autorun
+      @transition Session.get 'shift_next_area'
 
+    transition : ->
 
-    # self.transition(Meteor.Router.page()); 
+      switch
+      | not @_current-page   => return @_set-current-page(Session.get("shift_current_area"))
+      | @_next-page          => @end-transition()
+      | @_current-page is it => return
 
-    # do a transition to newPage, if we are already set and there already
-    #
-    # note: this is called inside an autorun, so we need to take care to not 
-    # do anything reactive.
+      @_set-next-page it
 
-    # var shift_current = Session.get("shift_current")
-    # console.log("shift_current", shift_current)
-    # console.log("shift_area", Session.get("shift_area"))
-    transition : (newPage) ->
-      self = this
+      <~ Deps.after-flush
+      @_options.before?!
+      @transition-classes = @_transition-classes!
 
-      # this is our first page? don't do a transition
-      return self._setCurrentPage(Session.get("shift_current_area"))  unless self._currentPage
-
-      # return self._setCurrentPage(newPage); 
-
-      # if we are transitioning already, quickly finish that transition
-
-      # console.log("_nextPage", self._nextPage) 
-      self.endTransition()  if self._nextPage
-
-      # if we are transitioning to the page we are already on, no-op
-
-      # console.log(self._currentPage, newPage) 
-      return  if self._currentPage is newPage
-
-      # Start the transition -- first tell any listeners to re-draw themselves
-      self._setNextPage newPage
-
-      # wait until they are done/doing:
-      Deps.afterFlush ->
-        self._options.before and self._options.before()
-
-        # derp a herp
-
-        # add relevant classes to the body and wait for the body to finish 
-        # transitioning (this is how we know the transition is done)
-        self.transitionClasses = self._transitionClasses()
-        $("body").addClass(self.transitionClasses).on self._transitionEvents, (e) ->
-          self.endTransition()  if $(e.target).is("body")
+      <~ $ "body" .add-class @transition-classes .on @_transition-events
+      if $(it.target).is("body") => @end-transition!
 
 
 
-    endTransition : ->
-      self = this
+    end-transition : ->
 
-      # if nextPage isn't set, something weird is going on, bail
-      return  unless self._nextPage
+      unless @_next-page => return
 
-      # switch
-      self._setCurrentPage self._nextPage
-      self._setNextPage null
+      @_set-current-page @_next-page
+      @_set-next-page null
 
-      # clean up our transitioning state
-      Deps.afterFlush ->
-        classes = self.transitionClasses
-        $("body").off(".transitioner").removeClass classes
-        self._options.after and self._options.after()
+      <~ Deps.after-flush
+      $ "body" .off ".transitioner" .remove-class @transition-classes
+      @_options.after?!
 
   Meteor.Transitioner = new Transitioner!
 

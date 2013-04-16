@@ -1,0 +1,31 @@
+
+_smash(n)
+  font-size n
+  line-height (n + ($spacing / 2))
+
+_clr = white
+
+
+h1, h2
+  font-weight 100
+
+
+h1.huge
+  font-weight 100
+  _smash(80px)
+  color _clr
+
+.heading
+  margin-bottom 60px
+
+.heading h1
+h1.heading
+  font-weight 100
+  _smash(60px)
+  color $gray
+
+h3.tagline
+  font-weight 300
+  _smash(22px)
+  color rgba(_clr, .8)
+

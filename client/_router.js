@@ -1,9 +1,8 @@
 var setArea;
 setArea = function(it){
-  var j;
   Session.set("shift_current_area", it);
-  j = $("li[data-shift-area=" + it.split('_')[0] + "]");
-  return j.trigger('click');
+  Session.set("shift_sub_area", null);
+  return Session.set("shift_next_menu", null);
 };
 Meteor.Router.add({
   "/": function(){

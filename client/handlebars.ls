@@ -110,21 +110,85 @@ do ->
   hh "form", (name) ->
     Template.form Forms.find-one { name: name } {reactive: true }
 
+  hh "holder_style", -> 
+    if it
+      Session.get "holder_style_#{it}"
+
+  hh "holder_set", !(name) ->
+    hh ?= null
+
+    if Session.get "holder_style_#{name}" => return
+
+    run = ~>
+      F  = $ ".row-holder"
+      C  = F.parents '.container-trim' 
+      ch = parse-int C.css("padding-top")
+
+      H  = F.parents '.holder'
+      hh = _.max H.children!.map(-> $ @ .height!).get!
+
+      if hh > 1
+        ph = C.parent!.height!
+
+        OUT = do -> ((ph / 2) - (hh / 2) - (ch * 1.5)).to-string! + "px"
+
+        Session.set "holder_style_#{name}", """
+          margin-top : #{OUT};
+          visibility : visible;
+          """
+
+    if hh < 1
+      _.delay run, 50
+
+  # hh "access_code", -> "ASD"
+
+#   hh "holder", (a, b) ->
+#     console.log "HOLDER", @, a, b
+#     @derp = "ASD"
+#     window.j = @
+#     a.fn @
+
+
+  # hh "center", 
+  #   ch ?= null
+
+  #   if @style?.length? => return
+
+  #   run = ~>
+  #     F  = $ 'form'
+  #     C  = F.parents '.container-trim' 
+  #     ch = C.height!
+  #     cp = parse-int C.css("padding-top")
+
+  #     if ch > 1
+  #       P  = C.parent!
+  #       ph = P.height!
+
+  #       OUT = do -> ((ph / 2) - (ch / 2) - cp - 30).to-string! + "px"
+
+  #       @ ..set "style", """
+  #           margin-top: #{OUT};
+  #           visibility: visible;
+  #           """
+  #         ..save!
+
+  #   if ch < 1
+  #     _.delay run, 50
+
+
+
+
+
 
 
   hh "display_name", ->
     u = My.user!
 
     switch
+    | not u           => return
     | u.username      => return u.username.split(' ')[0]
     | u.profile.name  => return u.profile.name.split(' ')[0]
 
-
-
-    # options.fn Forms.find-one name: name
-
-  # hh "current_reader",  -> Template["reader_" + Session.get("shift_current")]?()
-  # hh "next_reader",     -> Template["reader_" + Session.get("shift_sub_area")?.split('_')[0]]?()
 
   hh 'stable', -> 
     if Session.get 'loaded_stables' isnt true => return
