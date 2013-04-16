@@ -6,14 +6,9 @@
     "moment": {},
     "router": {},
     "stripe": {},
-    "collectionFS": {},
     "imgur": {},
-    "publish-with-relations": {},
-    "event-horizon": {},
-    "session-extras": {},
     "assert": {},
     "underscore-inflection": {},
-    "jade-handlebars": {},
-    "observatory": {}
+    "jade-handlebars": {}
   }
 }
